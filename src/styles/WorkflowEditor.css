@@ -1,29 +1,3225 @@
-.App-header {
-    background-color: #282c34;
-    padding: 20px;
-    color: white;
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: Overpass, sans-serif;
+    background-color: #b6b6b6;
+    color: #081c3e;
+    overflow: visible;
+    user-select: none;
+    text-overflow: ellipsis;
+}
+
+.app-header {
+    background: #021639;
+    color: #fff;
+    padding: 10px 20px;
+    padding-bottom: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    box-sizing: border-box;
+    height: 115px;
+}
+
+.app-header h1 {
+    margin: 0;
+}
+
+.user-profile {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.workflow-selector {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 300px;
     text-align: center;
 }
 
-select {
-    font-size: 16px;
-    padding: 5px;
+.app-dynamic-group-wrapper {
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+}
+
+.app-container {
+    width: 400px;
+    margin: 20px auto;
+    background-color: #E53A4E;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding-top: 30px;
+    border-radius: 50px;
+    position: relative;
+    top: 20px;
+    overflow: visible;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.properties-tabs {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    background-color: #021639;
+    box-sizing: border-box;
+    padding-top: 1px;
+}
+
+.properties-tab-link {
+    position: relative;
+    padding: 10px 20px;
+    margin: 0;
+    color: #00000060;
+    font-weight: bolder;
+    cursor: pointer;
+    text-align: center;
+    background-color: #919191;
+    border: 0px solid #919191;
+    border-bottom: none;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    max-width: 120px;
+}
+
+.properties-tab-link.active {
+    background-color: #747171;
+    color: white;
+    z-index: 2;
+}
+
+.workflow-tab.pointer {
+    cursor: pointer;
+}
+
+.not-allowed {
+    cursor: not-allowed;
+}
+
+/*Lighter Off Blue: #ffffff,  Darker Border Off Blue: #1e6ac6*/
+
+.properties-tab-link:before,
+.properties-tab-link.active:before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    bottom: 0px;
+    width: 10px;
+    height: 10px;
+    background: #747171;
+    z-index: 10000000000000000000000;
+}
+
+.properties-tab-link:not(.active):before {
+    background: #919191;
+    height: 20px;
+    width: 20px;
+    border-radius: 50px;
+    left: 0px;
+}
+
+.properties-tab-link:not(.active):after {
+    background: #919191;
+    height: 20px;
+    width: 20px;
+    border-radius: 50px;
+    right: 0px;
+}
+
+.properties-tab-link.active:after,
+.properties-tab-link:after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    bottom: 0px;
+    width: 10px;
+    height: 10px;
+    background: #747171;
+    z-index: 10000000000000000000000;
+}
+
+/*.properties-tab-link.active:before,
+.properties-tab-link.active:after {
+    background: white;
+}*/
+
+.properties-tab-link:first-child:before {
+    border-bottom-right-radius: 10px;
+}
+
+.properties-tab-link:last-child:after {
+    border-bottom-left-radius: 50px;
+}
+
+.properties-tab-content {
+    display: none;
+    background-color: #747171;
+    border-top: none;
+    padding: 0px;
+    width: 100%;
+}
+
+.properties-tab-content div,
+.properties-tab-content ul {
+    background-color: #747171;
+    border: none;
+}
+
+.properties-tab-content.active {
+    display: block;
+}
+
+
+.tab-navigation {
+    display: flex;
+    gap: 10px;
+}
+
+.tab-navigation button {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #747171;
+    border: none;
+    outline: none;
+    transition: 0.3s;
+}
+
+.tab {
+    display: flex;
+    justify-content: space-between;
+    background-image: linear-gradient(to top, #ca3647, #E53A4E);
     margin-top: 10px;
+    width: 100%;
+    border-bottom: 1px solid #ca3647;
+    justify-content: space-evenly;
+    user-select: none;
+    position: relative;
+    /*transition: transform 0.5s ease;*/
 }
 
-.module-container {
-    margin: 20px;
-    padding: 20px;
+.tab button {
+    flex-grow: 1;
+    /* Inherits the gradient from the .tab container */
+    background: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    color: #66141e;
+    padding: 0;
+    /* Adjust padding to ensure height is 50px */
+    height: 60px;
+    /* Fixed height */
+    /*transition: background-color 0.3s, border-color 0.3s;*/
+    font-family: Overpass, sans-serif;
+    font-size: 10px;
+    /* Adjusted for visible demonstration */
+    font-weight: bold;
+    text-align: center;
+    display: flex;
+    /* Added to align text vertically */
+    flex-direction: column;
+    white-space: nowrap;
+    align-items: center;
+    /* Centers text vertically */
+    justify-content: center;
+    /* Centers text horizontally */
+    border-right: 1px solid transparent;
+    /* Ensures the border takes up space */
+    border-left: 1px solid transparent;
+    /* Ensures the border takes up space */
+    border-image: linear-gradient(to top, #ba3141 0%, transparent 100%) 1;
+    border-bottom: 1px solid #ca3647;
+    position: relative;
+    /* Required for absolute positioning of inner span */
+    padding-top: 0px;
+    /* Extra padding at the top */
+    padding-bottom: 0px;
+    background-color: black;
+}
+
+.tab button:hover {
+    background-image: linear-gradient(to top, #e53a4e67, #e53a4e67);
+}
+
+.tab button.active {
+    background-image: linear-gradient(to top, #E53A4E, #E53A4E);
+    color: white;
+}
+
+.tab button .tab-number {
+    pointer-events: none;
+    width: 20px;
+    height: 20px;
+    background-color: #cb3446;
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: auto;
+    /* Space between number and title */
+    border: 1px solid #c53244;
+}
+
+.tab button .tab-title {
+    /* pointer-events: none;*/
+    max-width: 75%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: absolute;
+    margin-top: 5px;
+    bottom: 12.5%;
+    left: 12.5%;
+    right: 12.5%;
+    font-weight: lighter;
+}
+
+.tab button.active .tab-number {
+    background-color: white;
+    color: #E53A4E;
+    outline: 1px solid #ffffff;
+}
+
+/* Add keyframes for slide in/out animations */
+/* Keyframes for slide animations */
+@keyframes slideInLeft {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+/* Classes for applying animations */
+.slideInLeft {
+    animation: slideInLeft 0.5s forwards;
+}
+
+.slideInRight {
+    animation: slideInRight 0.5s forwards;
+}
+
+.tablinks {
+    display: inline-block;
+    min-width: 100px;
+    /* Adjust as necessary */
+    white-space: nowrap;
+}
+
+.tablinks:hover {
+    background-color: transparent;
+}
+
+.tab .tablinks.dynamic-width {
+    flex: 0 0 25%;
+    margin: 0px;
+    background-color: #E53A4E;
+}
+
+.tab .tablinks.dynamic-width:hover {
+    background-color: #e53a4e09;
+}
+
+.tab-container {
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: block;
+    padding: 0px;
+    border: 1px solid #ffffff;
+    background-color: #ffffff;
+    border-top: none;
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+    min-height: 700px;
+    overflow-y: auto;
+    overflow: visible;
+    max-height: 100%;
+    z-index: 100000000000000;
+}
+
+.checklist-content {
+    overflow-y: auto;
+    max-height: 400px;
+    /* Adjust as necessary */
+}
+
+/* Styles for form elements similar to your screenshots */
+input[type=text],
+select {
+    width: 100%;
+    padding: 4px;
+    margin: 1px 0;
+    display: block;
+    border: none;
+    box-sizing: border-box;
+    outline: none;
+}
+
+textarea {
+    width: 100%;
+    padding: 4px;
+    margin: 1px 0;
+    display: flex;
+    border: none;
+    box-sizing: border-box;
+    outline: none;
+    height: auto;
+}
+
+input[type=submit] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+input[type=date] {
+    width: 100%;
+    padding: 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    display: inline-block;
+    font-family: Overpass, sans-serif;
+    font-size: 12px;
+    border: none;
+    /* Removes the border */
+    outline: none;
+    /* Removes the focus outline */
+}
+
+/* Accessible focus state */
+input[type=date]:focus {
+    outline: none;
+    /* Example: Green outline on focus */
+}
+
+.form-element {
+    padding: 10px;
+    background: #fff;
+    margin: 5px 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.form-element:not(:last-child) {
+    border-bottom: 1px solid #e4e6ea;
+    /* Light grey line */
+}
+
+#workflowSelector {
+    width: 400px;
+    height: 40px !important;
+    padding: 1px;
+    border: 1px solid #e4e6ea;
+    border-radius: 4px;
+    margin-top: 40px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.label-element-label {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    margin-bottom: 0px;
+    /* Space between checkboxes */
+    position: relative;
+    border: 1px solid #e4e6ea;
+    border-radius: 4px;
+    background-color: #e4e6ea;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 8px;
+    box-sizing: border-box;
+    border: 1px solid #e4e6ea;
+    border-radius: 4px;
+}
+
+.button {
+    background-color: #E53A4E;
+    /* Blue background */
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    display: block;
+    width: 90%;
+    margin: 10px auto;
+    font-family: Overpass, sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #E53A4E;
+}
+
+.acuant-button {
+    background-color: #E53A4E;
+    /* Red background */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: Overpass, sans-serif;
+}
+
+.acuant-button:hover {
+    background-color: #c0392b;
+    /* Darken on hover */
+}
+
+.element-label {
+    display: flex;
+    font-weight: bold;
+    align-items: center;
+    background: #e4e6ea;
+    /* Light grey background */
+    padding: 10px;
+    margin-bottom: 0px;
+    /* No bottom margin */
+    position: relative;
+    border: 1px solid #e4e6ea;
+    /* Light grey border */
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    justify-content: left;
+    /* Center children horizontally */
+}
+
+.element-label-text {
+    max-width: 75%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.truncate-element-label {
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.truncate-commentlog-element-label {
+    display: -webkit-box;
+    flex: 1;
+    justify-content: left;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: inherit;
+    overflow: hidden;
+    background: #e4e6ea;
+    border: 1px solid #e4e6ea;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 10px;
+    align-items: center;
+    text-overflow: ellipsis;
+    line-height: 1.2em;
+    word-break: break-word;
+}
+
+/* CSS to style the placeholder of the CommentLog input */
+input[type='text']::placeholder {
+    /* Universal placeholder styling */
+    color: #888;
+    /* Light grey text color */
+}
+
+.checkbox-title {
+    flex: 1;
+    align-items: center;
+    background: #ffffff;
+    /* White background */
+    padding: 0px;
+    margin-bottom: 0px;
+    /* Space between checkboxes */
+    position: relative;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    /* White background */
+    padding: 10px;
+    margin-bottom: 0px;
+    /* Space between checkboxes */
+    position: relative;
+    border: 1px solid #f4f4f5;
+    border-top: 0px;
+}
+
+.checkbox-label:last-of-type {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+/* Custom checkmark style */
+.checkmark {
+    height: 20px;
+    width: 20px;
+    min-height: 20px;
+    min-width: 20px;
+    font-weight: bolder;
+    background-color: #ffffff;
+    margin-right: 10px;
+    /* Space between checkmark and label text */
+    position: relative;
+    /* To position the pseudo-elements inside */
+    border: 1.5px solid #b2b2b2;
+    /* Default border color */
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s;
+}
+
+/* Hide the default checkbox */
+input[type="checkbox"] {
+    opacity: 0;
+    position: absolute;
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+    margin: 0;
+    z-index: 2;
+    min-height: 20px;
+    min-width: 20px;
+}
+
+/* Style the indicator (hidden when not checked) */
+.checkmark::before {
+    content: '';
+    /* Empty when not checked */
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: -2px;
+    border-radius: 50%;
+    transition: background 0.3s;
+}
+
+/* Show the indicator when checked */
+input[type="checkbox"]:checked+.checkmark::before {
+    background-color: #4c9baf;
+    /* Green background for indicator */
+    content: '\2713';
+    color: #4CAF50;
+    font-size: 20px;
+    font-weight: bolder;
+    line-height: 25px;
+    /* Match height of the box for vertical centering */
+    text-align: center;
+    /* Ensures the checkmark is horizontally centered */
+    width: 100%;
+}
+
+input[type="checkbox"]:checked+.checkmark {
+    background-color: #fff;
+    /* Optional: change the background if needed */
+    border-color: #4CAF50;
+    /* Green border when checked */
+}
+
+.multiselect-element-label {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    margin-bottom: 0px;
+    position: relative;
+    border: 1px solid #ffffff;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    justify-content: left;
+    width: 100%;
+}
+
+.multi-select {
+    padding: 10px;
+    background: #e4e6ea;
+    border-radius: 20px;
+    cursor: pointer;
+    margin: 8px 0;
+    text-align: center;
+}
+
+.multi-select.active {
+    background-color: #e74c3c;
+    border-radius: 20px;
+    color: white;
+}
+
+.multi-select div.active {
+    background-color: #e74c3c;
+    color: white;
+    border: 1px solid #e74c3c;
+}
+
+select[multiple] {
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #e4e6ea;
+    background-color: white;
+    box-sizing: border-box;
+    padding: 5px;
+    cursor: pointer;
+}
+
+select[multiple]::-webkit-scrollbar {
+    width: 10px;
+    /* scrollbar width */
+    border-radius: 100px;
+}
+
+select[multiple]::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* track color */
+    border-radius: 100px;
+    border-radius: 100px;
+}
+
+select[multiple]::-webkit-scrollbar-thumb {
+    background: #888;
+    /* thumb color */
+    border-radius: 100px;
+}
+
+select[multiple]::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    /* thumb color when hovered */
+    border-radius: 100px;
+}
+
+select[multiple] option {
+    padding: 5px;
+    margin: 2px 0;
+    text-align: center;
+    text-decoration: underline;
+    border: 1px solid #e4e6ea;
+    background: #e4e6ea;
+    /* Adds underlining to each option */
+    font-family: Overpass, sans-serif;
+    font-size: 14px;
+    border-radius: 50px;
+    /* Change to block to ensure full width */
+    max-width: 100%;
+    /* Limit width to prevent overflow */
+    white-space: nowrap;
+    /* Keeps the text on a single line */
+    overflow: hidden;
+    /* Hide overflow */
+    text-overflow: ellipsis;
+}
+
+select[multiple] option:active {
+    background-color: #e74d3c91;
+    border: 2px solid #e74c3c;
+}
+
+select[multiple] option:checked {
+    background-color: #e74d3c91;
+    border: 2px solid #e74c3c;
+    text-decoration: underline;
+    font-family: Overpass, sans-serif;
+    font-size: 14px;
+}
+
+select {
+    font-family: Overpass, sans-serif;
+    font-size: 12px;
+    padding: 8px;
+    background-color: white;
+    border: 0px solid #e4e6ea;
+    border-radius: 4px;
+    width: 100%;
+    display: block;
+    /* Change to block to ensure full width */
+    max-width: 100%;
+    /* Limit width to prevent overflow */
+    white-space: nowrap;
+    /* Keeps the text on a single line */
+    overflow: hidden;
+    /* Hide overflow */
+    text-overflow: ellipsis;
+    /* Add ellipsis to overflow */
+}
+
+.pass-fail {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    /* White background */
+    padding: 5px;
+    margin-bottom: 0px;
+    /* Space between checkboxes */
+    position: relative;
+    border: 1px solid #f4f4f5;
+    border-top: 0px;
+}
+
+.pass-fail:last-child {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.pass-fail i {
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+.pass-fail label {
+    flex-grow: 1;
+}
+
+.draggable-item {
     border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 8px;
+    margin-bottom: 4px;
+    background-color: #f9f9f9;
+    cursor: default;
+    pointer-events: auto;
 }
 
-.module-container h2 {
-    margin-top: 0;
-    font-size: 1.5em;
+.draggable-item:hover {
+    background-color: #ddf;
 }
 
-.module-container ul {
+.draggable-item.dragging {
+    opacity: 0.5;
+    transition: none;
+}
+
+.cdk-drag {
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin-bottom: 4px;
+    background-color: #f9f9f9;
+    cursor: default;
+}
+
+/* tab styling for your unique class */
+.tab-drag {
+    background-color: #E53A4E !important;
+    flex: 0 0 25%;
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab-drag-preview {
+    flex: 0 0 25%;
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    outline: 1px solid #ffffff;
+}
+
+.tab-list {
+    display: flex;
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+/* General styling for all cdk-drop-list */
+.tab-list .cdk-drag {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab-list .cdk-drag-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab-drag .tab-number,
+.tab-drag-preview .tab-number {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    margin-bottom: 20px;
+    font-family: Overpass, sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    align-content: center;
+    border: 1px solid #c53244;
+}
+
+/* tab styles for normal state */
+.tab-drag .tab-number {
+    background-color: white;
+    color: #E53A4E;
+
+}
+
+.tab-drag-preview .tab-title {
+    color: #ffffff;
+}
+
+/* tab styles for active state */
+.tab-drag.active .tab-number,
+.tab-drag-preview.active .tab-number {
+    outline: 1px solid #ffffff;
+    color: white;
+}
+
+.tab-drag.cdk-drag-preview .tab-number {
+    outline: 1px solid white;
+    color: #E53A4E;
+}
+
+.tab-drag.cdk-drag-preview .tab-title {
+    color: white;
+}
+
+.tab-drag .tab-title,
+.tab-drag-preview .tab-title {
+    max-width: 75%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: absolute;
+    margin-top: 5px;
+    bottom: 12.5%;
+    left: 12.5%;
+    right: 12.5%;
+    font-weight: lighter;
+    font-family: Overpass, sans-serif;
+    font-size: 10px;
+}
+
+.tab-drag.active .tab-title,
+.tab-drag-preview.active .tab-title {
+    color: white;
+}
+
+/*.tab-list .cdk-drag {
+    background-color: black;
+}*/
+
+.tab-list .cdk-drag-preview {
+    background-color: black;
+}
+
+.tab button .cdk-drag-preview {
+    background: black;
+    border: 2px dashed blue;
+    opacity: 0.8;
+}
+
+.tab-container .cdk-drag-preview {
+    background: black;
+    border: 2px dashed grey;
+    opacity: 0.6;
+    visibility: hidden;
+}
+
+.cdk-drag:hover {
+    background-color: #021639;
+}
+
+.cdk-drop-list-dragging,
+.cdk-drag-dragging {
+    opacity: 0.5;
+    transition: none;
+}
+
+.cdk-drop-list-dragging .cdk-drag:not(.cdk-drag-dragging) {
+    transition: transform 300ms ease;
+}
+
+.cdk-drop-list {
+    border: 1px solid #ffffff;
+    background-color: #ffffff;
+    padding: 8px;
+}
+
+.cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 4px;
+    z-index: 9999 !important;
+    overflow: hidden;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+        0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drop-list:not(.field-option-list) .cdk-drag:hover {
+    background-color: #021639;
+    /* General hover style for non-field-option lists */
+}
+
+.cdk-drop-list:not(.field-option-list) .cdk-drag-preview {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    /* General preview shadow for non-field-option lists */
+}
+
+.cdk-drop-list:not(.field-option-list) .cdk-drag-placeholder {
+    background: #e0e0e0;
+    /* General placeholder background for non-field-option lists */
+    border: dashed 3px #bbb;
+    /* General placeholder border for non-field-option lists */
+}
+
+.cdk-drag-placeholder {
+    opacity: 1;
+    background-color: #E53A4E !important;
+    color: #ffffff;
+    box-shadow: 0 0 10px 5px #E53A4E !important;
+    border: 1px solid black !important;
+    border-radius: 4px;
+}
+
+.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.undo-prompt {
+    position: fixed;
+    bottom: 10px;
+    /* Start stacking from the bottom */
+    left: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background-color: #1fc28e85;
+    border: 1px solid #1caa7d;
+    box-shadow: -4px -4px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    z-index: 99999;
+    /* Ensure it's on top */
+    transition: transform 0.3s ease-in-out;
+}
+
+.undo-delete-button {
+    background-color: #F9FAFC;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    display: block;
+    margin: 10px auto;
+    font-family: Overpass, sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.undo-delete-button:hover {
+    background-color: #f9fafc8a;
+}
+
+#floatingContainer {
+    width: 360px;
+    box-sizing: border-box;
+    font-size: 12px;
+    z-index: 100000;
+    user-select: none;
+    padding: 0px;
+}
+
+#floatingContainer div {
+    background-color: #ffffff;
+    border-radius: 4px;
+    cursor: move;
+}
+
+#floatingContainer div:hover {
+    background-color: lightgrey;
+}
+
+.cdk-drag .new-field-options {
     list-style-type: none;
-    padding-left: 0;
+    background-color: black;
+}
+
+ul,
+li {
+    list-style: none;
+}
+
+.cdk-drag.field:hover {
+    background-color: #021639;
+    color: white;
+}
+
+.cdk-drag.field {
+    border-radius: 4px;
+}
+
+.tabContentContainer {
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+}
+
+.dynamicContentList {
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+    padding-bottom: 50px;
+}
+
+#tabButtonsContainer {
+    border: none;
+    padding: 0px;
+}
+
+#tabButtonsContainer::-webkit-scrollbar {
+    width: 10px;
+    /* Width of the scrollbar */
+    height: 10px;
+    /* Height of the scrollbar for horizontal scroll */
+}
+
+#tabButtonsContainer::-webkit-scrollbar-track {
+    background: #c7c7c7;
+    /* Color of the scrollbar track */
+    border-radius: 0px;
+    /* Round corners */
+}
+
+#tabButtonsContainer::-webkit-scrollbar-thumb {
+    background: #888;
+    /* Color of the scrollbar thumb */
+    border-radius: 10px;
+    /* Round corners */
+    border-bottom: 3px solid #00000079;
+}
+
+#tabButtonsContainer::-webkit-scrollbar-thumb:hover {
+    /*border-top: 0.5px solid #00000079;*/
+    border-bottom: none;
+}
+
+#tabButtonsContainer::-webkit-scrollbar-thumb:active {
+    background: #747171;
+    border-top: 1px solid #00000079;
+    /* Color of the scrollbar thumb on active (when clicked) */
+}
+
+.workflow-title {
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    font-weight: lighter;
+    margin: 20px;
+    user-select: none;
+}
+
+.workflow-title[contenteditable="true"]:hover,
+.workflow-title[contenteditable="true"]:focus {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: Overpass, sans-serif;
+    display: flex;
+    font-weight: bold;
+    align-items: center;
+    text-align: center;
+    background-color: #1FC28E;
+    padding: 4px;
+    position: relative;
+}
+
+.workflow-title[contenteditable="true"] {
+    outline: none;
+    padding: 4px;
+    justify-content: center;
+}
+
+.tab button .tab-title {
+    max-width: 75%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: absolute;
+    margin-top: 5px;
+    bottom: 12.5%;
+    left: 12.5%;
+    right: 12.5%;
+    font-weight: lighter;
+}
+
+.tab-title[contenteditable="true"]:hover,
+.tab-title[contenteditable="true"]:focus {
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: center;
+    font-family: Overpass, sans-serif;
+    display: flex;
+    font-weight: bold;
+    align-items: center;
+    background-color: #1FC28E;
+    position: relative;
+    z-index: 99999;
+    border-radius: 50px;
+    cursor: text;
+}
+
+.tab-title[contenteditable="true"] {
+    outline: none;
+    z-index: 99999;
+}
+
+#newTabFloatingContainer {
+    width: 360px;
+    box-sizing: border-box;
+    font-size: 12px;
+    z-index: 100000;
+    user-select: none;
+}
+
+#newTabFloatingContainer div {
+    border-radius: 4px;
+    cursor: move;
+}
+
+/*#newTabFloatingContainer div:hover {
+    background-color: lightgrey;
+}*/
+
+.cdk-drag .new-tab-options {
+    list-style-type: none;
+    /* Hide bullet points */
+    padding: 0;
+    /* Remove default padding */
+    margin: 0;
+    /* Remove default margin */
+    background-color: black;
+}
+
+.cdk-drag.tab-option:hover {
+    background-color: #021639;
+    color: white;
+}
+
+.cdk-drag.tab-option {
+    border-radius: 4px;
+}
+
+.tab-option-placeholder {
+    display: inline-block;
+    font-family: Overpass, sans-serif;
+    min-width: 100px;
+    white-space: nowrap;
+    display: flex;
+    margin: 0px;
+    background-color: #021639 !important;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.tab-option-placeholder a {
+    font-family: Overpass, sans-serif;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+}
+
+.trash-container {
+    position: fixed;
+    left: 25%;
+    top: calc(200px + 2vh);
+    width: 100px;
+    height: 100px;
+    background-color: transparent;
+    border-radius: 100%;
+    justify-content: center !important;
+    align-items: center;
+    text-align: center;
+    border: transparent;
+    font-size: 14px;
+    z-index: 100000;
+    user-select: none;
+    opacity: 100% !important;
+    z-index: 9999999;
+}
+
+#trashContainer .cdk-drag-placeholder {
+    position: absolute;
+    bottom: 75px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    height: auto;
+    opacity: 0.5;
+    z-index: -1;
+    border: 2px solid #ff0000;
+    opacity: 1;
+}
+
+.trash-icon {
+    font-size: 6em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    filter: brightness(0);
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 768px) {
+    .trash-container {
+        top: calc(50px + 5vh);
+        left: 15%;
+    }
+}
+
+/* Adjustments for larger screens */
+@media (min-width: 769px) {
+    .trash-container {
+        top: calc(50px + 3vh);
+        left: 15%;
+    }
+}
+
+.hidden-container {
+    visibility: hidden;
+    opacity: 0;
+}
+
+#applyFieldAttributes {
+    box-sizing: border-box;
+    width: 360px;
+    font-size: 14px;
+    z-index: 100000;
+    user-select: none;
+}
+
+#applyFieldAttributes div {
+    background-color: #ffffff;
+    border-radius: 4px;
+    cursor: move;
+}
+
+#applyFieldAttributes div:hover {
+    background-color: lightgrey;
+}
+
+.cdk-drag .apply-field-attributes {
+    list-style-type: none;
+    /* Hide bullet points */
+    padding: 0;
+    /* Remove default padding */
+    margin: 0;
+    /* Remove default margin */
+    background-color: black;
+}
+
+.cdk-drag.field-attribute:hover {
+    background-color: #021639;
+    color: white;
+}
+
+.cdk-drag.field-attribute {
+    border-radius: 4px;
+}
+
+.field-attribute-placeholder {
+    display: inline-block;
+    font-family: Overpass, sans-serif;
+    min-width: 100px;
+    white-space: nowrap;
+    display: flex;
+    margin: 0px;
+    background-color: #021639 !important;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.field-attribute-placeholder a {
+    font-family: Overpass, sans-serif;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+}
+
+.app-sidebar {
+    width: 360px;
+    background: #747171;
+    position: fixed;
+    height: 100%;
+    margin-top: 0 !important;
+    color: white;
+    background-color: #747171;
+    top: 0px;
+    /* Adjust according to your header height */
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center the flex items horizontally */
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 100000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.delete-button {
+    position: relative;
+
+    width: 95%;
+    padding: 4px;
+    margin: 8px;
+    display: inline-block;
+    box-sizing: border-box;
+
+    background-color: #021639;
+    text-align: center;
+    color: white;
+    border: none;
+
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.delete-button:hover {
+    opacity: 1;
+}
+
+
+
+
+
+
+
+
+
+.properties-tab-content.active {
+    display: block;
+}
+
+.sidebar-heading {
+    font-size: 18px;
+    margin-bottom: 0px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+    text-align: center;
+    font-weight: lighter !important;
+    padding: 0px;
+    width: 100%;
+}
+
+.new-tab-options {
+    list-style: none;
+    padding: 0;
+}
+
+.new-tab-options .tab-option {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 5px;
+    background-color: #E53A4E;
+    border-radius: 50px;
+    color: white;
+    text-align: center;
+    cursor: grab;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.new-tab-options .tab-option-placeholder {
+    background-color: #007bff;
+    color: white;
+}
+
+.new-tab-options .tab-option a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.field-items-list {
+    list-style: none;
+    padding: 0;
+    margin: 15px;
+}
+
+.field-item {
+    display: flex;
+    align-items: center;
+    padding: 0px;
+    border: 1px solid #ddd;
+    margin: 0px;
+    background-color: #fff;
+    cursor: grab;
+}
+
+.field-item-input-text {
+    margin-left: 10px !important;
+    height: 30px !important;
+    margin-top: 10px !important;
+    font-size: 10pt;
+    text-overflow: ellipsis;
+}
+
+.field-item:first-of-type {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.field-item:last-of-type {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.field-item input[type="text"] {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.add-item-button {
+    width: 315px;
+    margin: 15px;
+    border-radius: 4px;
+    border: none;
+    background-color: #dc3545;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-item-button:hover {
+    background-color: #c82333;
+}
+
+.field-item button {
+    background-color: #dc3545;
+    color: white;
+    height: 30px;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 5px;
+}
+
+.field-item button:hover {
+    background-color: #c82333;
+}
+
+.delete-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+}
+
+button {
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.not-allowed {
+    cursor: not-allowed;
+}
+
+.collapsible-section {
+    margin: 0px !important;
+    margin-bottom: 20px;
+}
+
+.collapsible-section h3 {
+    cursor: pointer;
+    user-select: none;
+    width: 100%;
+    margin: 0 !important;
+    padding: 1px;
+    padding-left: 5px;
+    background-color: #021639b9;
+    border-bottom: 1px solid #808080;
+    box-sizing: border-box;
+    display: inline-block;
+    height: 27px;
+}
+
+.collapsible-section label {
+    margin: 10px;
+    margin-bottom: 0px;
+    display: block;
+    color: white;
+}
+
+.app-sidebar input[type=text],
+input[type="number"],
+select {
+    width: 83%;
+    padding: 4px;
+    height: 23px;
+    margin: 10px;
+    display: block;
+    border: none;
+    font-size: 10pt;
+    box-sizing: border-box;
+    outline: none;
+    background-color: #e7e7e7;
+    margin-left: 30px;
+    position: relative;
+    margin-top: 0px;
+    padding-right: 20px;
+}
+
+.app-sidebar select {
+    width: 83%;
+    padding: 4px;
+    height: 23px;
+    margin: 10px;
+    border-radius: 4px;
+    border: none;
+    box-sizing: border-box;
+    outline: none;
+    background-color: #e7e7e7;
+    padding-right: 20px;
+    margin-top: 0px;
+    margin-left: 30px;
+}
+
+.group-container input[type=text],
+select {
+    width: 100%;
+    margin: 10px;
+    display: block;
+    background-color: white;
+    border: none;
+    box-sizing: border-box;
+    outline: none;
+    margin-left: 0px;
+    position: relative;
+}
+
+.collapsible-section h3::after {
+    content: '\25BC';
+    /* Downward arrow symbol */
+    font-size: 12px;
+    position: sticky;
+    margin: 5px;
+    float: right;
+}
+
+.collapsible-section h3.active::after {
+    content: '\25B2';
+    /* Upward arrow symbol */
+}
+
+.collapsible-section div {
+    padding: 0;
+    box-sizing: border-box;
+    border-bottom: 1px solid #808080;
+}
+
+.collapsible-section div.collapsed {
+    display: none;
+}
+
+.field-items-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.field-item input {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.add-item-button,
+.delete-button {
+    margin-top: 10px;
+    display: block;
+}
+
+#floatingContainer .cdk-drag.field {
+    border-radius: 50px;
+    color: black;
+    text-align: center;
+    margin-left: 5px;
+    margin-right: 5px;
+    cursor: grab;
+}
+
+#floatingContainer .cdk-drag.field:hover {
+    background-color: #ccc;
+}
+
+/* Media tab specific styles */
+.media-tab-content {
+    text-align: center;
+    padding: 20px;
+}
+
+.gradient-icon {
+    font-size: 72px;
+    /* Adjust size as needed */
+    background: linear-gradient(to bottom, #c3c8ce, #ffffff);
+    /* Gradient colors */
+    -webkit-background-clip: text;
+    background-clip: none;
+    -webkit-text-fill-color: transparent;
+}
+
+.media-tab-content .fas.fa-camera {
+    margin-top: 150px;
+    font-size: 72px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.media-tab-content p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.media-tab-content .new-capture-button {
+    background-color: #E53A4E;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    width: 80%;
+    text-align: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.media-tab-content .new-capture-button i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.tabcontent.share-tab-content {
+    padding: 0px;
+    text-align: center;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.add-email-button,
+.add-phone-button {
+    background-color: #eeeef0;
+    color: #001539;
+    border: 2px solid #e7e6eb;
+    border-radius: 4px;
+    padding: 10px 40px;
+    font-size: 12px;
+    font-weight: bolder;
+    display: flex;
+    align-items: center;
+}
+
+.add-email-button i,
+.add-phone-button i {
+    margin-right: 8px;
+}
+
+.divider {
+    height: 2px;
+    background-color: #e7e6eb;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.tabcontent.share-tab-content p {
+    padding: 20px;
+    padding-top: 0px;
+}
+
+.tabcontent.upload-tab-content {
+    padding: 0px;
+    background-color: #f3f2f8;
+}
+
+.upload-tab-content p {
+    padding: 10px;
+    padding-top: 15px;
+    background-color: #e5e6ea;
+    margin: 0px;
+    font-weight: bold;
+}
+
+.add-followup-task-button,
+.add-signature-button {
+    background-color: #ffffff;
+    border: 1px solid #dadadc;
+    color: #e53a4d;
+    text-align: left;
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    text-decoration: underline;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-left: none;
+    border-right: none;
+}
+
+.help-icon {
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 12pt !important;
+    vertical-align: middle;
+}
+
+.help-popup {
+    position: fixed;
+    width: 200px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 4px 4px 4px black;
+    color: #081c3e;
+    padding: 10px;
+    z-index: 10000000000000000000;
+}
+
+.help-popup img {
+    width: 100%;
+    height: auto;
+}
+
+.field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.help-popup {
+    position: fixed;
+    width: 200px;
+    background-color: white !important;
+    color: #081c3e;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 4px 4px 4px black;
+    padding: 10px;
+    z-index: 10000000000000000000;
+}
+
+.field-checkbox {
+    margin-right: 10px;
+}
+
+.help-icon {
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 12pt !important;
+}
+
+.help-popup {
+    position: absolute;
+    width: 200px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 4px 4px 4px black;
+    padding: 10px;
+    z-index: 10000000000000000000;
+}
+
+.help-popup img {
+    width: 100%;
+    height: auto;
+}
+
+.field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.duplicate-checkbox {
+    border: 1px solid black !important;
+    z-index: 100000000 !important;
+    margin: 10px !important;
+    opacity: 0.5 !important;
+    top: -15.5px;
+    right: 10px;
+    background-color: #021639;
+    position: absolute;
+    padding: 4px;
+    justify-content: center;
+    align-items: center;
+
+    text-rendering: auto;
+    line-height: 1;
+    font-variant: normal;
+    font-style: normal;
+    display: flex;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* styles.css or your component's CSS file */
+.custom-snackbar {
+    background-color: #ff4081;
+    /* Custom background color */
+    color: white;
+    /* Custom text color */
+    font-size: 16px;
+    /* Custom font size */
+    border-radius: 8px;
+    /* Rounded edges */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    /* Border shadow */
+    z-index: 100000;
+    /* Ensure it appears in front of other elements */
+}
+
+.custom-snackbar .mat-mdc-snack-bar-action {
+    color: white;
+    /* Custom action button color */
+}
+
+.cdk-global-overlay-wrapper {
+    top: 0 !important;
+    position: fixed;
+}
+
+li.cdk-drag.field-item {
+    display: block;
+}
+
+.instruction-item-input-text {
+    margin-left: 10px !important;
+    height: 30px !important;
+    margin-top: 10px !important;
+    font-size: 10pt;
+    text-overflow: ellipsis;
+    width: 92% !important;
+    box-sizing: border-box;
+}
+
+.instruction-item-input-checkbox {
+    border: 1px solid black !important;
+    z-index: 100000000 !important;
+    margin-left: 10px !important;
+    background-color: #021639;
+    position: relative !important;
+    padding: 4px;
+    justify-content: center;
+    align-items: center;
+    opacity: 1 !important;
+
+    text-rendering: auto;
+    line-height: 1;
+    font-variant: normal;
+    font-style: normal;
+    display: block;
+    -webkit-font-smoothing: antialiased;
+}
+
+li.cdk-drag.field-item label {
+    color: black !important;
+    margin-left: 40px;
+}
+
+.instruction-item {
+    display: block;
+}
+
+.instruction-item:first-of-type {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.instruction-item:last-of-type {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    flex-grow: 0;
+    background-color: transparent !important;
+    color: black !important;
+    width: 95% !important;
+    border-bottom: none !important;
+    font-size: 14px;
+}
+
+.instruction-item-input-checkbox {
+    margin-right: 5px;
+    /* Space between the checkbox and the label */
+}
+
+li.cdk-drag.instruction-item {
+    margin-bottom: 0px;
+}
+
+li.cdk-drag-preview.instruction-item {
+    margin-bottom: 0px;
+}
+
+li.cdk-drag-preview.instruction-item .checkbox-container {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+li.cdk-drag-preview.instruction-item label {
+    margin-left: 10px;
+    display: flex;
+}
+
+li.cdk-drag-preview.instruction-item input[type=text] {
+    padding: 4px;
+    margin: 10px;
+    display: block;
+    border: none;
+    font-size: 10pt;
+    box-sizing: border-box;
+    outline: none;
+    background-color: #e7e7e7;
+    position: relative;
+    padding-right: 20px;
+    margin-left: 10px !important;
+    height: 30px !important;
+    margin-top: 10px !important;
+    text-overflow: ellipsis;
+    width: 92% !important;
+}
+
+.instruction-item button {
+    position: relative;
+    width: 44.5%;
+    padding: 4px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    display: inline-block;
+    box-sizing: border-box;
+    background-color: #dc3545;
+    text-align: center;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.instruction-item button:hover {
+    background-color: #c82333;
+}
+
+#instructionsList {
+    margin: 0;
+}
+
+#newInstructionsList {
+    margin: 0;
+}
+
+#updateInstructionsList {
+    margin: 0;
+}
+
+#closeInstructionsList {
+    margin: 0;
+}
+
+li.cdk-drag.instruction-item:hover {
+    background-color: white !important;
+}
+
+/* Ensure the checkboxes are displayed correctly */
+.mat-checkbox {
+    display: inline-flex;
+    /* Allows the checkbox and label to be displayed side by side */
+    align-items: center;
+    /* Vertically aligns the checkbox with the label */
+    cursor: pointer;
+    /* Changes the cursor to a pointer when hovering over the checkbox */
+    padding: 8px;
+    /* Adds some padding around the checkbox for better clickability */
+    margin-bottom: 10px;
+    /* Adds space below each checkbox */
+}
+
+/* Style for the checkbox label */
+.mat-checkbox .mat-checkbox-label {
+    font-size: 16px;
+    /* Sets a readable font size */
+    color: #000;
+    /* Ensures the text color is black (or change to fit your theme) */
+}
+
+/* Style for the checkbox itself */
+.mat-checkbox .mat-checkbox-inner-container {
+    width: 18px;
+    /* Standard checkbox size */
+    height: 18px;
+    /* Standard checkbox size */
+    border: 1px solid #ccc;
+    /* Adds a border to the checkbox */
+    background-color: #fff;
+    /* Ensures the checkbox has a white background */
+}
+
+/* Checked state */
+.mat-checkbox-checked .mat-checkbox-background {
+    background-color: #3f51b5;
+    /* The primary color of the checked state */
+}
+
+/* Hover state */
+.mat-checkbox:hover .mat-checkbox-inner-container {
+    border-color: #888;
+    /* Changes border color on hover */
+}
+
+/* Disabled state */
+.mat-checkbox-disabled .mat-checkbox-inner-container {
+    background-color: #f5f5f5;
+    /* Light gray background for disabled checkboxes */
+    border-color: #ddd;
+    /* Lighter border for disabled checkboxes */
+}
+
+.mat-checkbox-disabled .mat-checkbox-label {
+    color: #888;
+    /* Light gray color for disabled labels */
+    cursor: not-allowed;
+    /* Changes cursor to indicate the checkbox is disabled */
+}
+
+.edit-html-textarea {
+    width: 100%;
+    min-height: 100px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    font-family: Overpass, sans-serif;
+    font-size: 14px;
+    margin-left: 4px;
+    outline: none;
+    box-shadow: 0 0 4px #1FC28E inset;
+    background-color: #ffffff;
+}
+
+.edit-html-textarea:focus {
+
+    border: 1px solid #1FC28E;
+    box-shadow: 0 0 4px #1FC28E inset;
+}
+
+.editable-html {
+    cursor: text;
+    background-color: #ffffff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: none;
+    outline: none;
+    height: auto;
+    padding-left: 4px;
+}
+
+.edit-html-container {
+    margin: 0px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 0px;
+    /* Reduces the top margin */
+    margin-bottom: 0px;
+    /* Reduces the bottom margin */
+    max-height: 5px;
+}
+
+.editable-html h1 {
+    font-size: 2.5em;
+    /* Significantly larger than normal text */
+}
+
+.editable-html h2 {
+    font-size: 2.0em;
+    /* Larger than normal but smaller than h1 */
+}
+
+.editable-html h3 {
+    font-size: 1.75em;
+    /* Moderately large */
+}
+
+.editable-html h4 {
+    font-size: 1.5em;
+    /* Slightly larger than normal text */
+}
+
+.editable-html h5 {
+    font-size: 1.25em;
+}
+
+.editable-html h6 {
+    font-size: 1.1em;
+}
+
+.edit-html-textarea {
+    margin: 0;
+    max-height: 75px;
+}
+
+.edit-html-textarea h1,
+.edit-html-textarea h2,
+.edit-html-textarea h3,
+.edit-html-textarea h4,
+.edit-html-textarea h5,
+.edit-html-textarea h6 {
+    margin-top: 0em;
+    /* Reduces the top margin */
+    margin-bottom: 0em;
+    /* Reduces the bottom margin */
+    max-height: 75px;
+}
+
+.edit-html-textarea h1 {
+    font-size: 2.5em;
+    /* Significantly larger than normal text */
+}
+
+.edit-html-textarea h2 {
+    font-size: 2.0em;
+    /* Larger than normal but smaller than h1 */
+}
+
+.edit-html-textarea h3 {
+    font-size: 1.75em;
+    /* Moderately large */
+}
+
+.edit-html-textarea h4 {
+    font-size: 1.5em;
+    /* Slightly larger than normal text */
+}
+
+.edit-html-textarea h5 {
+    font-size: 1.25em;
+}
+
+.edit-html-textarea h6 {
+    font-size: 1.1em;
+}
+
+.edit-dropdown-button,
+.save-dropdown-button {
+    position: relative;
+
+    width: 100%;
+    padding: 4px;
+    margin: 1px 0;
+    display: inline-block;
+    box-sizing: border-box;
+
+    background-color: #021639;
+    margin-top: 8px;
+    text-align: center;
+    color: white;
+    border: none;
+
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 9999;
+    opacity: 0.5;
+}
+
+.edit-dropdown-button:hover,
+.save-dropdown-button:hover {
+    opacity: 1;
+}
+
+.placeholder {
+    color: grey;
+    font-style: italic;
+}
+
+.group-container {
+    min-height: 40px;
+    position: relative;
+    border: 1px solid #dcdcdc;
+    padding: 8px;
+    margin: 8px;
+    border-radius: 8px;
+    background-color: white;
+    overflow: visible;
+    box-shadow: -4px 4px 8px rgba(0, 0, 0, 0.384);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    align-items: center;
+}
+
+.field-list {
+    padding-top: 1px;
+    padding-bottom: 50px;
+    overflow: visible;
+}
+
+.group-container.focused {
+    border: 2px dotted red !important;
+    box-shadow: 0 0 10px #1FC28E !important;
+}
+
+.focused {
+    border: 2px solid #1FC28E;
+    /* Adjust the color and thickness as needed */
+}
+
+.drag-handle {
+    cursor: move;
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background-color: #021639;
+    color: white;
+    border: none;
+    padding: 4px;
+    /* Adjust padding to 0 */
+    width: 16px;
+    /* Example width */
+    height: 16px;
+    /* Equal to width for a perfect circle */
+    border-radius: 50%;
+    /* Use 50% for perfect circles */
+    z-index: 9999;
+    opacity: 0.5;
+    display: flex;
+    align-items: center;
+    /* Centers the icon vertically */
+    justify-content: center;
+}
+
+.drag-handle:hover {
+    opacity: 1;
+}
+
+.editable-label {
+    font-size: 11pt;
+    font-family: Overpass, sans-serif;
+    padding: 4px;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    direction: ltr;
+    text-align: left;
+    position: relative;
+    /* Ensure the label is positioned correctly */
+    min-width: 0%;
+}
+
+.editable-label[contenteditable="true"]:hover,
+.editable-label[contenteditable="true"]:focus {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #dcdcdc;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    justify-content: left;
+    font-family: Overpass, sans-serif;
+    display: flex;
+    font-weight: bold;
+    align-items: center;
+
+    padding: 4px;
+    margin-bottom: 5.5px;
+    position: relative;
+    font-size: 16px;
+}
+
+.editable-label[contenteditable="true"] {
+    outline: none;
+    padding: 4px;
+}
+
+.editable-item {
+
+    padding: 4px;
+    display: block;
+    width: 100%;
+    height: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.editable-item[contenteditable="true"]:hover,
+.editable-item[contenteditable="true"]:focus {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    justify-content: left;
+    font-family: Overpass, sans-serif;
+    display: inline-block;
+    margin: auto;
+    align-items: center;
+
+    padding: 3.5px;
+    position: relative;
+    font-size: 16px;
+}
+
+.editable-item[contenteditable="true"] {
+    outline: none;
+    padding: 4px;
+}
+
+.editable-label-center {
+
+    padding: 4px;
+    display: block;
+    width: 100%;
+    height: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    border-radius: 50px;
+}
+
+.editable-label-center[contenteditable="true"]:hover,
+.editable-label-center[contenteditable="true"]:focus {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #dcdcdc;
+    justify-content: left;
+    font-family: Overpass, sans-serif;
+    display: flex;
+    font-weight: bold;
+    align-items: center;
+
+    padding: 4px;
+    margin-bottom: 0px;
+    position: relative;
+    font-size: 12px;
+    border-radius: 50px;
+}
+
+.editable-label-center[contenteditable="true"] {
+    outline: none;
+    padding: 4px;
+}
+
+.editable-label-center[contenteditable="true"]:hover {
+    text-align: center !important;
+    display: block;
+    width: 100%;
+    border-radius: 50px;
+}
+
+.multi-dropdown-item {
+    display: flex;
+    align-items: center;
+    border: 1px solid #dcdcdc;
+    text-align: center;
+    border-radius: 50px;
+    text-decoration: underline;
+}
+
+.single-dropdown-item {
+    display: flex;
+    align-items: center;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border: 1px solid #dcdcdc;
+    border-bottom: none;
+    text-align: left;
+    font-size: 12px;
+}
+
+.single-dropdown-item:first-of-type {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.single-dropdown-item:last-of-type {
+    border-bottom: 1px solid #dcdcdc;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.editable-label-sdd {
+
+    padding: 4px;
+    display: block;
+    width: 100%;
+    height: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    text-align: left;
+    border-radius: 4px;
+}
+
+.editable-label-sdd[contenteditable="true"]:hover,
+.editable-label-sdd[contenteditable="true"]:focus {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #dcdcdc;
+    border-bottom: none;
+    justify-content: left;
+    font-family: Overpass, sans-serif;
+    display: flex;
+    font-weight: bold;
+    align-items: center;
+
+    padding: 4px;
+    margin-bottom: 0px;
+    position: relative;
+    font-size: 12px;
+    text-align: left;
+}
+
+.editable-label-sdd[contenteditable="true"] {
+    outline: none;
+    padding: 4px;
+    text-align: left;
+}
+
+.editable-label-sdd[contenteditable="true"]:hover {
+    text-align: left !important;
+    display: block;
+    width: 100%;
+}
+
+.editable-html[contenteditable="true"]:hover,
+.editable-html[contenteditable="true"]:focus {
+
+    padding: 4px;
+    display: block;
+
+    position: relative;
+    outline: none;
+    border: 1px solid #E53A4E;
+    border-radius: 4px;
+    box-shadow: 0 0 4px #E53A4E inset;
+    box-sizing: border-box;
+}
+
+.edit-html-button,
+.save-html-button {
+    margin-top: 8px;
+    margin-left: 8px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.edit-html-button:hover,
+.save-html-button:hover {
+    background-color: #0056b3;
+}
+
+.edit-html-textarea {
+    width: 100%;
+    height: 100px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    font-family: Overpass, sans-serif;
+    font-size: 14px;
+    box-shadow: 0 0 10px 2px #e53a4e inset;
+}
+
+.edit-input-grey-label {
+    width: auto;
+    border: 1px solid #dcdcdc;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    justify-content: left;
+    font-family: Overpass, sans-serif;
+    display: block;
+    font-weight: bold;
+
+    align-items: center;
+    background: #e4e6ea;
+    padding: 20px;
+    margin-bottom: 0px;
+    position: relative;
+    font-size: 16px;
+}
+
+.edit-input-grey-label[contenteditable="true"]:hover,
+.edit-input-grey-label[contenteditable="true"]:focus {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #dcdcdc;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    justify-content: left;
+    font-family: Overpass, sans-serif;
+    display: block;
+    font-weight: bold;
+    align-items: center;
+
+    padding: 10px;
+    margin-bottom: 0px;
+    position: relative;
+    font-size: 16px;
+}
+
+.edit-input-grey-label[contenteditable="true"] {
+    outline: none;
+    padding: 10px;
+}
+
+.editable-label:focus {
+
+    outline: none;
+    border: 1px solid #E53A4E;
+    border-radius: 4px;
+    box-shadow: 0 0 4px #E53A4E inset;
+    text-align: center;
+}
+
+.group-header {
+    padding: 8px;
+    border-bottom: 1px solid #dcdcdc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow: hidden;
+}
+
+.group-wrapper {
+    position: relative;
+    margin-bottom: 32px;
+    overflow: visible;
+}
+
+.floating-edit-button {
+    position: absolute;
+    top: 8px;
+    left: calc(100% - 20px);
+    top: -5px;
+    background-color: #021639;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 9999;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.remove-button {
+    position: relative;
+    width: 30px !important;
+    height: 30px !important;
+    right: 0px;
+    background-color: #021639;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    margin-left: 4px;
+    cursor: pointer;
+    z-index: 9999;
+    opacity: 0.5;
+}
+
+.remove-button:hover {
+    opacity: 1;
+}
+
+.remove-button-passfail {
+    position: absolute;
+    right: -60px;
+    width: 30px !important;
+    height: 30px !important;
+    background-color: #021639;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 9999;
+    opacity: 0.5;
+}
+
+.remove-button-passfail:hover {
+    opacity: 1;
+}
+
+.option-drag-handle {
+    position: relative;
+    width: 30px !important;
+    height: 30px !important;
+    right: 0px;
+    background-color: #021639;
+    text-align: center;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    margin-left: 10px;
+    cursor: pointer;
+    z-index: 9999;
+    opacity: 0.5;
+    display: flex;
+    /* Use Flexbox */
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Center vertically */
+}
+
+.option-drag-handle:hover {
+    opacity: 1;
+}
+
+.option-drag-handle-passfail {
+    position: absolute;
+    right: -60px;
+    width: 30px !important;
+    height: 30px !important;
+    background-color: #021639;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 9999;
+    opacity: 0.5;
+    display: flex;
+    /* Use Flexbox for centering */
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Center vertically */
+    padding: 0;
+    /* Ensure no extra padding */
+}
+
+.option-drag-handle i {
+    font-size: 1em;
+    /* Adjust the font size as needed */
+    line-height: 1;
+    /* Ensure line height does not affect centering */
+    margin: 0;
+    /* Ensure no extra margin */
+    padding: 0;
+    /* Ensure no extra padding */
+}
+
+.option-drag-handle-passfail:hover {
+    opacity: 1;
+}
+
+.field-option-list .field-option-item {
+    background-color: #ffffff;
+    /* Default background for field options */
+}
+
+.field-option-list .field-option-item:hover {
+    background-color: #ffffff;
+    /* Override hover background for field options */
+}
+
+.field-option-list .cdk-drag-preview {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    /* Custom preview shadow for field options */
+}
+
+.field-option-list .cdk-drag-placeholder {
+    background: #f0f0f0;
+    /* Custom placeholder background for field options */
+    border: dashed 2px #ccc;
+    /* Custom placeholder border for field options */
+}
+
+.field-option-list .option-drag-handle {
+    cursor: grab;
+    margin-left: 10px;
+    display: inline-block;
+}
+
+
+.add-item-button {
+    position: relative;
+
+    width: 100%;
+    padding: 4px;
+    margin: 1px 0;
+    display: inline-block;
+    box-sizing: border-box;
+
+    background-color: #021639;
+    margin-top: 8px;
+    text-align: center;
+    color: white;
+    border: none;
+
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 9999;
+    opacity: 0.5;
+}
+
+.add-item-button:hover {
+    opacity: 1;
+}
+
+.add-item-button-center {
+    position: relative;
+
+    width: 100%;
+    padding: 4px;
+    margin: 1px 0;
+    display: inline-block;
+    box-sizing: border-box;
+
+    background-color: #021639;
+    margin-top: 8px;
+    text-align: center;
+    color: white;
+    border: none;
+
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 9999;
+    opacity: 0.5;
+}
+
+.add-item-button-center:hover {
+    opacity: 1;
+}
+
+
+.floating-edit-button:hover {
+    background-color: #021639;
+}
+
+.edit-input {
+    width: 100%;
+    margin-right: 8px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    font-family: Overpass, sans-serif;
+    font-size: 14px;
+    box-shadow: 0 0 10px 2px #E53A4E inset;
+}
+
+.edit-input-acuant-button {
+    background-color: #E53A4E;
+    display: flex;
+    /* Use flexbox to ensure centering */
+    justify-content: center;
+    /* Center content horizontally */
+    align-items: center;
+    /* Center content vertically */
+    color: white;
+    border: none;
+    padding: 0;
+    /* Remove internal padding for full coverage */
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    height: 40px;
+    /* Ensure it fills the parent's height */
+
+    font-size: 16px;
+    font-family: Overpass, sans-serif;
+    z-index: 9999;
+}
+
+.edit-input-acuant-button:hover,
+.edit-input-acuant-button:focus {
+    display: flex;
+    /* Maintain the centering behavior */
+    justify-content: center;
+    align-items: center;
+}
+
+.edit-input-label {
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 16px;
+    font-family: Overpass, sans-serif;
+    box-shadow: 0 0 10px 2px #E53A4E inset;
+}
+
+.edit-input-label-textbox {
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-family: Overpass, sans-serif;
+    box-shadow: 0 0 10px 2px #E53A4E inset;
+}
+
+.edit-input-comment-log {
+    width: 100%;
+    border: 1px solid #dcdcdc;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    justify-content: left;
+    font-family: Overpass, sans-serif;
+    display: flex;
+    align-items: center;
+    background: #e4e6ea;
+    padding: 10px;
+    margin: 0px;
+    position: relative;
+    font-size: 16px;
+    box-shadow: 0 0 10px 2px #E53A4E inset;
+}
+
+.acuant-button {
+    background-color: #E53A4E;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    display: block;
+    font-size: 16px;
+    font-family: Overpass, sans-serif;
+}
+
+.truncate-element-label {
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.truncate-commentlog-element-label {
+    display: -webkit-box;
+    flex: 1;
+    justify-content: left;
+    -webkit-box-orient: vertical;
+    line-clamp: 3;
+    overflow: hidden;
+    background: #e4e6ea;
+    border: 1px solid #e4e6ea;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 10px;
+    align-items: center;
+    text-overflow: ellipsis;
+    line-height: 1.2em;
+    word-break: break-word;
+}
+
+.element-label {
+    display: flex;
+    font-weight: bold;
+    align-items: center;
+    background: #e4e6ea;
+    /* Light grey background */
+    padding: 10px;
+    margin-bottom: 0px;
+    /* No bottom margin */
+    position: relative;
+    border: 1px solid #e4e6ea;
+    /* Light grey border */
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    justify-content: left;
+    /* Center children horizontally */
+}
+
+.commentlog-input::placeholder {
+    font-size: 10px;
+    font-family: Overpass, sans-serif;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+.pass-fail {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    padding: 5px;
+    margin-bottom: 0px;
+    border: 1px solid #f4f4f5;
+    border-top: 0px;
+}
+
+.pass-fail:last-of-type {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.radio-container {
+    margin: 0px 0;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    /* White background */
+    padding: 4px;
+    margin-bottom: 0px;
+    /* Space between checkboxes */
+    position: relative;
+    border: 1px solid #f4f4f5;
+    border-top: 0px;
+    border-bottom: 0px;
+    align-items: flex-end;
+}
+
+.radio-label:last-of-type {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.radio-title {
+    margin-right: 15px !important;
+    /* Space between dot and label */
+}
+
+.radio {
+    margin-right: 15px !important;
+    /* Space between dot and label */
+}
+
+.radioDot {
+    height: 15px;
+    width: 15px;
+    min-height: 15px;
+    min-width: 15px;
+    border-radius: 50%;
+    /* Make it round */
+    background-color: #ffffff;
+    margin: 5px;
+    border: 1px solid #b2b2b2;
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    /* Ensure it's formatted as an inline element with block properties */
+}
+
+input[type="radio"] {
+    opacity: 0;
+    /* Hide the default radio button */
+    position: absolute;
+    /* Position absolutely to overlay on the custom dot */
+    cursor: pointer;
+    margin: 5px;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    z-index: 2;
+}
+
+/* Ensure only the dot is clickable */
+input[type="radio"]+.radioDot {
+    cursor: pointer;
+}
+
+.radioDot::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Center the dot perfectly */
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: transparent;
+    /* Start with no background */
+    transition: background-color 0.1s;
+    /* Smooth transition for the dot appearance */
+}
+
+input[type="radio"]:checked+.radioDot::before {
+    background-color: #4CAF50;
+    /* Green dot appears when checked */
+}
+
+.unhandled-field-type {
+    color: red;
+    font-size: 0.8em;
+    font-style: italic;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.delete-button {
+    cursor: pointer;
+    position: absolute;
+    top: -8px;
+    right: 20px;
+    background-color: #021639;
+    color: white;
+    border: none;
+    width: 24px;
+    /* Ensure this matches the drag handle */
+    height: 24px;
+    /* Ensure this matches the drag handle */
+    border-radius: 50%;
+    /* Use 50% for perfect circles */
+    z-index: 9999;
+    opacity: 0.5;
+    display: flex;
+    align-items: center;
+    /* Centers the icon vertically */
+    justify-content: center;
+    /* Centers the icon horizontally */
+}
+
+.delete-button:hover {
+    background-color: red;
+    opacity: 1;
+}
+
+.drag-preview-layer {
+    pointer-events: none;
+    z-index: 1000;
+    width: auto;
+    height: auto;
+}
+
+/* Adjust opacity and appearance as needed */
+.drag-preview-layer .group-container {
+    opacity: 0.8;
+    width: 100%;
+}
+
+.placeholder {
+    border: 2px dashed #aaa;
+    background-color: hotpink;
+    min-height: 50px;
+    /* Adjust height as needed */
+    margin: 10px 0;
+    /* Adjust spacing as needed */
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+/* Hide the default checkbox */
+.custom-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+/* Create a custom checkbox */
+.custom-checkbox input[type="checkbox"]+label::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #007BFF;
+    background-color: white;
+    border-radius: 3px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+/* Checked state */
+.custom-checkbox input[type="checkbox"]:checked+label::before {
+    background-color: lightgreen;
+    /* Change this to the color you want */
+    border-color: grey;
+}
+
+.custom-checkbox input[type="checkbox"]:checked+label::after {
+    content: '\f00c';
+    /* Font Awesome check mark */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    color: white;
+    position: absolute;
+    left: 4px;
+    top: 2px;
+    font-size: 12px;
 }
