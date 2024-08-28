@@ -9,7 +9,6 @@ import HelpPopup from './components/HelpPopup';
 import './styles/WorkflowEditor.css';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import DragPreviewLayer from './styles/DragPreviewLayer';
 
 function App() {
   const [selectedModules, setSelectedModules] = useState([]);
@@ -18,6 +17,10 @@ function App() {
   const [workflowTitle, setWorkflowTitle] = useState('');
   const [helpPosition, setHelpPosition] = useState({ top: 0, left: 0 });
   const [activeHelp, setActiveHelp] = useState(null);
+
+  const setTabs = (newTabs) => {
+    setSelectedModules(newTabs);
+  };
 
   // Filter workflow options based on the provided logic
   const workflowOptions = workflowData.template.modules
@@ -78,7 +81,6 @@ function App() {
   // Render the App component
   return (
     <DndProvider backend={HTML5Backend}>
-      <DragPreviewLayer />
       <div className="App">
         <AppHeader workflowOptions={workflowOptions} onSelectWorkflow={handleSelectWorkflow} />
         <div id="appContainer" className="app-container" style={{ display: selectedModules.length > 0 ? 'block' : 'none' }}>
@@ -91,6 +93,7 @@ function App() {
               tabs={selectedModules}
               activeWorkflowTab={activeWorkflowTab}
               setActiveWorkflowTab={setActiveWorkflowTab}
+              setTabs={setTabs}
             />
           </div>
           <div id="tabContentContainer" className="tabcontent">
