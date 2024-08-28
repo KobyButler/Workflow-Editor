@@ -349,6 +349,7 @@ html {
     overflow: hidden;
     display: flex;
     justify-content: space-between;
+    position: relative;
 }
 
 /* Style the tab content */

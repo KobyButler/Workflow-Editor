@@ -1,15 +1,22 @@
-import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
-import App from './App';
+import { render, screen } from '@testing-library/react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import Field from '../src/components/Field';
 
-describe('App Component', () => {
-  test('should select workflow', () => {
-    render(<App />);
+test('renders Field component correctly', () => {
+  const group = { type: 'Textbox', label: 'Test Label' };
 
-    // Use the test ID to select the dropdown
-    const select = screen.getByTestId('workflowSelector');
+  render(
+      <DndProvider backend={HTML5Backend}>
+          <Field
+              group={group}
+              index={0}
+              moveField={() => {}}
+              handleDragStart={() => {}}
+              handleDragEnd={() => {}}
+          />
+      </DndProvider>
+  );
 
-    // Simulate selecting a workflow
-    fireEvent.change(select, { target: { value: 'RC2, LB1, LB2, F2, F8, F4, F5, F6, F7, M1, E1, N2, C2' } });
-  });
+  expect(screen.getByLabelText(/test label/i)).toBeInTheDocument();
 });
