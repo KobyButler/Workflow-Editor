@@ -35,7 +35,6 @@ function Tab({ isActive, tabNumber, tabTitle, onClick, index, moveTab }) {
             layout
             className={`tablinks ${isActive ? 'active' : ''}`}
             style={{ opacity: isDragging ? 0.5 : 1 }}
-            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onClick}
         >

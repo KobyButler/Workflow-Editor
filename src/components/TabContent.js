@@ -1,47 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import Field from './Field';
+import React from 'react';
+import FormTab from './Tabs/FormTab';
+import MediaTab from './Tabs/MediaTab';
+import ShareTab from './Tabs/ShareTab';
+import UploadTab from './Tabs/UploadTab';
 
-export default function TabContent({ groups = [] }) {
-    const [fieldOrder, setFieldOrder] = useState([]);
-    const [draggedIndex, setDraggedIndex] = useState(null);
-
-    useEffect(() => {
-        setFieldOrder(groups);
-    }, [groups]);
-
-    const moveField = (fromIndex, toIndex) => {
-        const updatedOrder = [...fieldOrder];
-        const [movedField] = updatedOrder.splice(fromIndex, 1);
-        updatedOrder.splice(toIndex, 0, movedField);
-        setFieldOrder(updatedOrder);
-    };
-
-    const handleDragStart = (index) => {
-        setDraggedIndex(index);
-    };
-
-    const handleDragEnd = () => {
-        setDraggedIndex(null);
+export default function TabContent({ groups = [], tabKey }) {
+    const renderContent = () => {
+        if (tabKey.startsWith('F')) {
+            return <FormTab groups={groups} />;
+        } else if (tabKey.startsWith('M')) {
+            return <MediaTab />;
+        } else if (tabKey.startsWith('E')) {
+            return <ShareTab />;
+        } else if (tabKey.startsWith('C')) {
+            return <UploadTab />;
+        } else {
+            return <div className="tabcontent">Unhandled Tab Type</div>;
+        }
     };
 
     return (
-        <div className="field-list">
-            {fieldOrder.map((group, index) => (
-                <React.Fragment key={`${group.key || index}-${index}`}>
-                    {draggedIndex !== null && draggedIndex === index && (
-                        <div className="placeholder" style={{ height: '60px', backgroundColor: '#f0f0f0', border: '2px dashed #ccc', marginBottom: '10px' }}>
-                            {/* Placeholder: Adjust styles as needed */}
-                        </div>
-                    )}
-                    <Field
-                        index={index}
-                        group={group}
-                        moveField={moveField}
-                        handleDragStart={handleDragStart}
-                        handleDragEnd={handleDragEnd}
-                    />
-                </React.Fragment>
-            ))}
+        <div className="tab-content">
+            {renderContent()}
         </div>
     );
 }
