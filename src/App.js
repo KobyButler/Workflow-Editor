@@ -70,9 +70,7 @@ function App() {
     const activeModule = selectedModules.find((tab) => tab.key === tabKey);
     if (activeModule) {
       return (
-        <div>
-          <TabContent groups={activeModule.groups} />
-        </div>
+        <TabContent tabKey={tabKey} groups={activeModule.groups} />
       );
     }
     return null;

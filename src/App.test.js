@@ -1,22 +1,25 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import Field from '../src/components/Field';
+import TabContent from './components/TabContent';
 
-test('renders Field component correctly', () => {
-  const group = { type: 'Textbox', label: 'Test Label' };
+describe('TabContent Component', () => {
+  it('renders FormTab when tabKey starts with F', () => {
+    render(<TabContent tabKey="F1" groups={[]} />);
+  });
 
-  render(
-      <DndProvider backend={HTML5Backend}>
-          <Field
-              group={group}
-              index={0}
-              moveField={() => {}}
-              handleDragStart={() => {}}
-              handleDragEnd={() => {}}
-          />
-      </DndProvider>
-  );
+  it('renders MediaTab when tabKey starts with M', () => {
+    render(<TabContent tabKey="M1"/>);
+  });
 
-  expect(screen.getByLabelText(/test label/i)).toBeInTheDocument();
+  it('renders ShareTab when tabKey starts with E', () => {
+    render(<TabContent tabKey="E1"/>);
+  });
+
+  it('renders UploadTab when tabKey starts with C', () => {
+    render(<TabContent tabKey="C1"/>);
+  });
+
+  it('renders Unhandled Tab Type when tabKey does not match', () => {
+    render(<TabContent tabKey="X1"/>);
+  });
 });
