@@ -1,29 +1,20 @@
-import React, { useRef } from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import Tab from './Tab';
 
-
-function TabContainer({ tabs, activeWorkflowTab, setActiveWorkflowTab, setTabs }) {
-    const tabContainerRef = useRef(null);
+function TabContainer({ tabs, activeWorkflowTab, setActiveWorkflowTab, setTabs, handleTabClick }) {
     const scrollSpeed = 5;
 
-    const moveTab = (dragIndex, hoverIndex) => {
-        const draggedTab = tabs[dragIndex];
-        const updatedTabs = [...tabs];
-        updatedTabs.splice(dragIndex, 1);
-        updatedTabs.splice(hoverIndex, 0, draggedTab);
-        setTabs(updatedTabs);
-    };
-
     const handleScroll = (direction) => {
-        if (tabContainerRef.current) {
-            tabContainerRef.current.scrollLeft += direction * scrollSpeed;
-        }
+        document.getElementById('tabContainer').scrollLeft += direction * scrollSpeed;
     };
 
     const handleMouseMove = (e) => {
-        if (!tabContainerRef.current) return;
+        const tabContainer = document.getElementById('tabContainer');
+        if (!tabContainer) return;
 
-        const { left, right } = tabContainerRef.current.getBoundingClientRect();
+        const { left, right } = tabContainer.getBoundingClientRect();
         const { clientX } = e;
 
         if (clientX - left < 150) {
@@ -33,27 +24,86 @@ function TabContainer({ tabs, activeWorkflowTab, setActiveWorkflowTab, setTabs }
         }
     };
 
+    const handleClick = (moduleKey) => {
+        setActiveWorkflowTab(moduleKey); // Activate the tab
+        handleTabClick(moduleKey);       // Open the properties sidebar
+    };
+
+    const [tabOrder, setTabOrder] = useState([]);
+
+    useEffect(() => {
+        setTabOrder(tabs);
+    }, [tabs]);
+
+    const onDragEnd = (result) => {
+        const { source, destination } = result;
+
+        // If dropped outside the list, do nothing
+        if (!destination) return;
+
+        // Reorder the fields in the checklist tab
+        const reorderedTabs = Array.from(tabOrder);
+        const [movedTab] = reorderedTabs.splice(source.index, 1);
+        reorderedTabs.splice(destination.index, 0, movedTab);
+
+        setTabOrder(reorderedTabs);
+    };
+
     return (
-        <div
-            id="tabContainer"
-            className="tab-container"
-            ref={tabContainerRef}
-            onMouseMove={handleMouseMove}
-        >
-            <div id="tabButtonsContainer" className="tab tab-list">
-                {tabs.map((module, index) => (
-                    <Tab
-                        key={module.key}
-                        index={index}
-                        isActive={activeWorkflowTab === module.key}
-                        tabNumber={index + 1}
-                        tabTitle={module.tab_bar_item?.title || `Tab ${index + 1}`}
-                        onClick={() => setActiveWorkflowTab(module.key)}
-                        moveTab={moveTab}
-                    />
-                ))}
-            </div>
-        </div>
+        //<DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="droppable-tab-list" direction="horizontal">
+                {(provided) => (
+                    <div
+                        id="tabContainer"
+                        className="tab-container"
+                        ref={provided.innerRef} // Attach the innerRef to the Droppable container
+                        {...provided.droppableProps}
+                        onMouseMove={handleMouseMove}
+                    >
+                        <div id="tabButtonsContainer" className="tab tab-list">
+                            {tabOrder.map((module, index) => (
+                                <Draggable key={module.key} draggableId={module.key} index={index}>
+                                    {(provided) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            className="draggable-tab-wrapper"
+                                            style={{
+                                                position: 'relative',
+                                                userSelect: 'none',
+                                                ...provided.draggableProps.style,
+                                            }}
+                                        >
+                                            <Tab
+                                                index={index}
+                                                isActive={activeWorkflowTab === module.key}
+                                                tabNumber={index + 1}
+                                                tabTitle={module.tab_bar_item?.title || `Tab ${index + 1}`}
+                                                onClick={() => handleClick(module.key)}
+                                            />
+                                            {/* Drag handle in top right corner */}
+                                            <div
+                                                {...provided.dragHandleProps}
+                                                className="drag-handle"
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: '0px',
+                                                    right: '-5px',
+                                                    cursor: 'move',
+                                                }}
+                                            >
+                                                <i className="fas fa-arrows-alt"></i>
+                                            </div>
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder} {/* Placeholder is essential for Droppable to work */}
+                        </div>
+                    </div>
+                )}
+            </Droppable>
+        //</DragDropContext>
     );
 }
 

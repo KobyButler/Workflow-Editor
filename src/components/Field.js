@@ -1,53 +1,23 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { motion } from 'framer-motion';
 
-const ItemType = {
-    FIELD: 'field',
-};
-
-export default function Field({ group, index, moveField, handleDragStart, handleDragEnd }) {
+export default function Field({ group, index, moveField, handleDragStart, handleDragEnd, handleFieldClick }) {
     const ref = React.useRef(null);
 
-    const [{ isDragging }, drag] = useDrag({
-        type: ItemType.FIELD,
-        item: { index, group },
-        collect: (monitor) => ({
-            isDragging: monitor.isDragging(),
-        }),
-        end: () => {
-            handleDragEnd();
-        },
-    });
-
-    const [, drop] = useDrop({
-        accept: ItemType.FIELD,
-        hover(item) {
-            if (item.index !== index) {
-                moveField(item.index, index);
-                item.index = index;
-            }
-        },
-    });
-
-    drag(drop(ref));
-
     return (
-        <motion.div
+        <div
             ref={ref}
             className="group-container"
-            style={{ opacity: isDragging ? 0.5 : 1 }}
             initial={{ y: 0, opacity: 1 }}
-            animate={{ y: 0, opacity: isDragging ? 0.5 : 1 }}
             transition={{ duration: 0.2 }}
+            onClick={handleFieldClick}
         >
             <div className="drag-handle">
                 <i className="fas fa-arrows-alt"></i>
             </div>
             <RenderField group={group} />
-        </motion.div>
+        </div>
     );
 }
 
@@ -78,23 +48,23 @@ export function RenderField({ group }) {
     };
 
     if (!group) {
-        return <motion.div className="unhandled-field-type">No group data provided.</motion.div>;
+        return <div className="unhandled-field-type">No group data provided.</div>;
     }
 
     switch (group.type) {
         case 'AcuantButton':
-            return <motion.button className="edit-input-acuant-button">{group.label}</motion.button>;
+            return <button className="edit-input-acuant-button">{group.label}</button>;
         case 'AcuantTextbox':
         case 'Textbox':
             return (
-                <motion.div>
+                <div>
                     <label className="editable-label" htmlFor={`input-${group.label}`}>{group.label}</label>
                     <input id={`input-${group.label}`} type="text" />
-                </motion.div>
+                </div>
             );
         case 'Checkbox':
             return (
-                <motion.div>
+                <div>
                     <label className="edit-input-grey-label">{group.label}</label>
                     <div className="field-option-list">
                         {group?.items?.map((item, i) => (
@@ -105,20 +75,20 @@ export function RenderField({ group }) {
                             </div>
                         ))}
                     </div>
-                </motion.div>
+                </div>
             );
         case 'CommentLog':
             return (
-                <motion.div>
+                <div>
                     <label className="edit-input-grey-label">{group.label}</label>
                     <input type="text" className="commentlog-input" placeholder="Enter a comment" />
-                </motion.div>
+                </div>
             );
         case 'HTMLLabel':
-            return <motion.div className="editable-html" dangerouslySetInnerHTML={{ __html: group.label }}></motion.div>;
+            return <div className="editable-html" dangerouslySetInnerHTML={{ __html: group.label }}></div>;
         case 'MultiDropDownList':
             return (
-                <motion.div>
+                <div>
                     <label className="editable-label">{group.label}</label>
                     <select multiple>
                         {group?.items?.map((item, i) => (
@@ -127,11 +97,11 @@ export function RenderField({ group }) {
                             </option>
                         ))}
                     </select>
-                </motion.div>
+                </div>
             );
         case 'SingleDropDownList':
             return (
-                <motion.div>
+                <div>
                     <label className="editable-label">{group.label}</label>
                     <select>
                         {group?.items?.map((item, i) => (
@@ -140,13 +110,13 @@ export function RenderField({ group }) {
                             </option>
                         ))}
                     </select>
-                </motion.div>
+                </div>
             );
         case 'PassFail':
             if (!group.items || thumbsState.length === 0) return null; // Ensure thumbsState is initialized
 
             return (
-                <motion.div>
+                <div>
                     <label className="edit-input-grey-label">{group.label}</label>
                     <div className="field-option-list">
                         {group?.items?.map((item, i) => (
@@ -165,11 +135,11 @@ export function RenderField({ group }) {
                             </div>
                         ))}
                     </div>
-                </motion.div>
+                </div>
             );
         case 'Radio':
             return (
-                <motion.div>
+                <div>
                     <label className="edit-input-grey-label">{group.label}</label>
                     <div className="field-option-list">
                         {group?.items?.map((item, i) => (
@@ -180,18 +150,18 @@ export function RenderField({ group }) {
                             </div>
                         ))}
                     </div>
-                </motion.div>
+                </div>
             );
         case 'DateSelector':
             return (
-                <motion.div>
+                <div>
                     <label className="editable-label">{group.label}</label>
                     <input type="date" name={group.label} />
-                </motion.div>
+                </div>
             );
         case 'Label':
-            return <motion.label className="edit-input-grey-label">{group.label}</motion.label>;
+            return <label className="edit-input-grey-label">{group.label}</label>;
         default:
-            return <motion.div className="unhandled-field-type">Unhandled Field Type: {group.type}</motion.div>;
+            return <div className="unhandled-field-type">Unhandled Field Type: {group.type}</div>;
     }
 }
