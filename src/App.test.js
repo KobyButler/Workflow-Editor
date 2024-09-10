@@ -1,25 +1,20 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import TabContent from './components/TabContent';
+import '@testing-library/jest-dom';
+import App from './App';
 
-describe('TabContent Component', () => {
-  it('renders FormTab when tabKey starts with F', () => {
-    render(<TabContent tabKey="F1" groups={[]} />);
+describe('App component', () => {
+  // Test to check if the sidebar is rendered
+  test('renders the sidebar', () => {
+    render(<App />);
+    const sidebar = screen.getByText(/Workflow Properties/i);
+    expect(sidebar).toBeInTheDocument();
   });
 
-  it('renders MediaTab when tabKey starts with M', () => {
-    render(<TabContent tabKey="M1"/>);
-  });
-
-  it('renders ShareTab when tabKey starts with E', () => {
-    render(<TabContent tabKey="E1"/>);
-  });
-
-  it('renders UploadTab when tabKey starts with C', () => {
-    render(<TabContent tabKey="C1"/>);
-  });
-
-  it('renders Unhandled Tab Type when tabKey does not match', () => {
-    render(<TabContent tabKey="X1"/>);
+  // Test to check if the tab container is rendered
+  test('renders the tab container', () => {
+    render(<App />);
+    const tabContainer = screen.getByText(/Add New Tab/i);
+    expect(tabContainer).toBeInTheDocument();
   });
 });

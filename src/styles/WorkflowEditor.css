@@ -245,7 +245,6 @@ html {
     padding-top: 0px;
     /* Extra padding at the top */
     padding-bottom: 0px;
-    background-color: black;
 }
 
 .tab button:hover {
@@ -451,7 +450,6 @@ input[type=date]:focus {
     padding: 1px;
     border: 1px solid #e4e6ea;
     border-radius: 4px;
-    margin-top: 40px;
     box-sizing: border-box;
     text-align: center;
 }
@@ -2203,8 +2201,6 @@ h6 {
     margin-top: 0px;
     /* Reduces the top margin */
     margin-bottom: 0px;
-    /* Reduces the bottom margin */
-    max-height: 5px;
 }
 
 .editable-html h1 {
@@ -3223,4 +3219,21 @@ input[type="radio"]:checked+.radioDot::before {
     left: 4px;
     top: 2px;
     font-size: 12px;
+}
+
+.field {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin: 5px;
+    background-color: white;
+    cursor: move;
+}
+
+.field-checkbox {
+    margin-right: 10px;
+}
+
+.help-icon {
+    margin-left: 10px;
+    cursor: pointer;
 }

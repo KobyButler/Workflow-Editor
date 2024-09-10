@@ -5,22 +5,26 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@testing-library/user-event": "^13.5.0",
+    "@types/node": "^22.5.4",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
     "framer-motion": "^11.3.30",
     "immutability-helper": "^3.1.1",
     "react": "^18.3.1",
-    "react-dnd": "^16.0.1",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.3.1",
+    "react-icons": "^5.3.0",
     "react-scripts": "5.0.1",
     "react-spring": "^9.7.4",
     "styled-components": "^6.1.12",
+    "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "test:jest": "react-scripts test --transformIgnorePatterns '/node_modules/(?!react-dnd|react-dnd-html5-backend|dnd-core|@react-dnd)/'",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -43,17 +47,14 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.24.8",
-    "@testing-library/jest-dom": "^6.4.8",
-    "@testing-library/react": "^16.0.0",
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.1",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.5.1"
   },
   "jest": {
     "moduleNameMapper": {
       "\\.(css|less|scss|sass)$": "<rootDir>/src/__mocks__/styleMock.js"
-    },
-    "transformIgnorePatterns": [
-      "/node_modules/(?!react-dnd|react-dnd-html5-backend|dnd-core|@react-dnd)"
-    ]
+    }
   }
 }
