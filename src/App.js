@@ -13,6 +13,8 @@ import WorkflowLoader from './components/WorkflowLoader';
 import Login from './components/Login';
 import { v4 as uuidv4 } from 'uuid';
 
+let fieldIdCounter = 1;
+
 function App() {
   const [groups, setGroups] = useState([]);
   const [fieldCount, setFieldCount] = useState(0);
@@ -31,6 +33,7 @@ function App() {
   const [isWorkflowLoaded, setIsWorkflowLoaded] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [fullModuleKeys, setFullModuleKeys] = useState([]);
+  const [fieldError, setFieldError] = useState('');
 
   useEffect(() => {
     const storedToken = localStorage.getItem('apiToken');
@@ -214,19 +217,34 @@ function App() {
     });
   };
 
-  const onFieldChange = (fieldKey, newValue, prevLabel = null) => {
+  const onFieldChange = (fieldKey, newValue) => {
     setSelectedField((prevField) => {
       const updatedField = { ...prevField, [fieldKey]: newValue };
 
-      // Also update the workflowData to keep everything in sync
+      if (fieldKey === 'label') {
+        const prevLabel = prevField.label;
+        const currentModule = workflowData.template.modules.find(
+          (module) => module.key === activeWorkflowTab
+        );
+
+        if (currentModule && currentModule.groups) {
+          const labels = currentModule.groups.map((group) => group.label);
+          const labelsExcludingCurrent = labels.filter((label) => label !== prevLabel);
+
+          if (labelsExcludingCurrent.includes(newValue)) {
+            window.alert('A field with this label already exists. Please choose a different label.');
+            return prevField;
+          }
+        }
+      }
+
       setWorkflowData((prevWorkflowData) => {
         const updatedModules = prevWorkflowData.template.modules.map((module) => {
           if (module.key === activeWorkflowTab) {
             return {
               ...module,
               groups: module.groups?.map((group) => {
-                // Match the group by label since it's unique
-                const labelToMatch = fieldKey === 'label' && prevLabel ? prevLabel : updatedField.label;
+                const labelToMatch = fieldKey === 'label' ? prevField.label : updatedField.label;
                 if (group.label === labelToMatch) {
                   return updatedField;
                 }
@@ -249,7 +267,6 @@ function App() {
       return updatedField;
     });
   };
-
 
   const onFieldItemsChange = (itemIndex, newItemValue) => {
     setSelectedField((prevField) => {
@@ -667,7 +684,7 @@ function App() {
 
       const copiedField = {
         ...fieldToCopy,
-        id: uuidv4(),
+        id: fieldIdCounter++,
         label: placeholderLabel,
         ...(defaultItems && { items: defaultItems }),
       };
