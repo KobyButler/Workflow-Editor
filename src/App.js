@@ -30,6 +30,7 @@ function App() {
   const [apiToken, setApiToken] = useState(null);
   const [isWorkflowLoaded, setIsWorkflowLoaded] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [fullModuleKeys, setFullModuleKeys] = useState([]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('apiToken');
@@ -91,6 +92,49 @@ function App() {
     }
   }, [activeWorkflowTab, selectedField, workflowData]);
 
+  useEffect(() => {
+    const updateSequenceValue = () => {
+      setWorkflowData((prevData) => {
+        const updatedModules = prevData.template.modules.map((module) => {
+          if (module.logic_branch && module.logic_branch.variable === '{WORKFLOW_MODULES}') {
+            const updatedOptions = module.logic_branch.options.map((option) => {
+              if (option.value === selectedWorkflowOptionValue) {
+                // Update the value property with the current fullModuleKeys
+                return {
+                  ...option,
+                  value: fullModuleKeys.join(', '),
+                };
+              }
+              return option;
+            });
+            return {
+              ...module,
+              logic_branch: {
+                ...module.logic_branch,
+                options: updatedOptions,
+              },
+            };
+          }
+          return module;
+        });
+
+        return {
+          ...prevData,
+          template: {
+            ...prevData.template,
+            modules: updatedModules,
+          },
+        };
+      });
+    };
+
+    if (workflowData && selectedWorkflowOptionValue) {
+      updateSequenceValue();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fullModuleKeys, selectedWorkflowOptionValue]);
+
+
   const handleTabClick = (tabKey) => {
     setActiveWorkflowTab(tabKey);
     setActiveSidebarTab('tab2');
@@ -123,8 +167,8 @@ function App() {
   };
 
   const handleWorkflowDataLoaded = (data) => {
-    const dataWithIds = assignUniqueIdsToGroups(data);
-    setWorkflowData(dataWithIds);
+    //const dataWithIds = assignUniqueIdsToGroups(data);
+    setWorkflowData(data);
     setIsWorkflowLoaded(true);
   };
 
@@ -142,10 +186,20 @@ function App() {
     setWorkflowData((prevData) => {
       const updatedModules = prevData.template.modules.map((module) => {
         if (module.key === activeWorkflowTab) {
-          return {
-            ...module,
-            [key]: value,
-          };
+          let updatedModule = { ...module };
+          if (Array.isArray(key)) {
+            // Nested update
+            let currentLevel = updatedModule;
+            for (let i = 0; i < key.length - 1; i++) {
+              const k = key[i];
+              if (!currentLevel[k]) currentLevel[k] = {};
+              currentLevel = currentLevel[k];
+            }
+            currentLevel[key[key.length - 1]] = value;
+          } else {
+            updatedModule[key] = value;
+          }
+          return updatedModule;
         }
         return module;
       });
@@ -238,19 +292,27 @@ function App() {
   };
 
   const assignUniqueIdsToGroups = (data) => {
-    const updatedData = { ...data };
-    updatedData.template.modules = updatedData.template.modules.map((module) => {
+    const updatedData = {
+      ...data,
+      template: { ...data.template },
+    };
+
+    updatedData.template.modules = data.template.modules.map((module) => {
       if (module.groups) {
-        module.groups = module.groups.map((group) => {
-          if (!group.id) {
-            group.id = uuidv4();
-          }
-          group.label = group.label || 'Unnamed Field';
-          // Add any other default values as needed...
-          return group;
+        const updatedGroups = module.groups.map((group) => {
+          return {
+            ...group,
+            id: group.id || uuidv4(),
+            label: group.label || 'Unnamed Field',
+          };
         });
+        return {
+          ...module,
+          groups: updatedGroups,
+        };
       }
-      return module;
+      // Ensure all properties are preserved
+      return { ...module };
     });
     return updatedData;
   };
@@ -303,11 +365,15 @@ function App() {
     if (workflowValue) {
       const keys = workflowValue.split(', ');
 
+      setFullModuleKeys(keys);
+
       // Filter the keys to only include ones starting with 'F', 'M', 'E', 'C'
       const filteredKeys = keys.filter(key => ['F', 'M', 'E', 'C'].includes(key[0]));
 
       // Store filtered module keys
       setModuleKeys(filteredKeys);
+
+
 
       // Find the selected option
       const selectedOption = workflowOptions.find(option => option.value === workflowValue);
@@ -321,6 +387,7 @@ function App() {
         setActiveWorkflowTab(filteredKeys[0]);
       }
     } else {
+      setFullModuleKeys([]);
       setModuleKeys([]);
       setActiveWorkflowTab('');
       setWorkflowTitle('');
@@ -365,7 +432,6 @@ function App() {
       };
     });
   };
-
 
   // Helper function to create new tabs based on the type
   const createNewTab = (tabOption, workflowData) => {
@@ -464,6 +530,26 @@ function App() {
       reorderedKeys.splice(destination.index, 0, movedKey);
 
       setModuleKeys(reorderedKeys);
+      // Update fullModuleKeys
+      const updatedFullModuleKeys = [...fullModuleKeys];
+
+      // Positions of filtered keys in fullModuleKeys
+      const filteredKeyPositions = fullModuleKeys.reduce((acc, key, index) => {
+        if (['F', 'M', 'E', 'C'].includes(key[0])) {
+          acc.push(index);
+        }
+        return acc;
+      }, []);
+
+      // Move the key in fullModuleKeys
+      const sourceFullIndex = filteredKeyPositions[source.index];
+      const destinationFullIndex = filteredKeyPositions[destination.index];
+
+      const [movedFullKey] = updatedFullModuleKeys.splice(sourceFullIndex, 1);
+      updatedFullModuleKeys.splice(destinationFullIndex, 0, movedFullKey);
+
+      setFullModuleKeys(updatedFullModuleKeys);
+
       return;
     }
 
@@ -503,6 +589,29 @@ function App() {
       const updatedModuleKeys = [...moduleKeys];
       updatedModuleKeys.splice(destination.index, 0, newTab.key);
       setModuleKeys(updatedModuleKeys);
+
+      // Insert the new tab key into fullModuleKeys at the correct position
+      const updatedFullModuleKeys = [...fullModuleKeys];
+
+      // Find positions of filtered keys in fullModuleKeys
+      const filteredKeyPositions = fullModuleKeys.reduce((acc, key, index) => {
+        if (['F', 'M', 'E', 'C'].includes(key[0])) {
+          acc.push(index);
+        }
+        return acc;
+      }, []);
+
+      // Determine the insert index in fullModuleKeys
+      let insertIndex = 0;
+      if (destination.index < filteredKeyPositions.length) {
+        insertIndex = filteredKeyPositions[destination.index];
+      } else {
+        insertIndex = fullModuleKeys.length;
+      }
+
+      // Insert the new tab key
+      updatedFullModuleKeys.splice(insertIndex, 0, newTab.key);
+      setFullModuleKeys(updatedFullModuleKeys);
       return;
     }
 
@@ -678,6 +787,8 @@ function App() {
         );
         return updatedModuleKeys;
       });
+
+      setFullModuleKeys((prevFullModuleKeys) => prevFullModuleKeys.filter(key => key !== activeWorkflowTab));
 
       // Update activeWorkflowTab
       setActiveWorkflowTab((prevActiveTab) => {

@@ -58,7 +58,7 @@ const AppSidebar = ({
         items: true,
         conditional: false,
         fieldMap: false,
-        instructions: false,
+        instructions: true,
         new_instructions: false,
         update_instructions: false,
         close_instructions: false,
@@ -249,28 +249,11 @@ const AppSidebar = ({
             autonav: false,
             image_url: '',
         };
-        const updatedInstructions = [...(selectedTab[instructionType] || []), newInstruction];
+        const updatedInstructions = [
+            ...(selectedTab[instructionType] || []),
+            newInstruction,
+        ];
         updateTabAttribute(instructionType, updatedInstructions);
-    };
-
-    const onInstructionDragEnd = (result) => {
-        const { source, destination } = result;
-
-        // If dropped outside the list, do nothing
-        if (!destination) return;
-
-        // Extract the instructionType from the droppableId
-        const instructionType = source.droppableId.replace('droppable-instruction-list-', '');
-
-        // Only handle reordering within the same instruction type
-        if (source.droppableId === destination.droppableId) {
-            const updatedInstructions = Array.from(selectedTab[instructionType]);
-            const [movedItem] = updatedInstructions.splice(source.index, 1);
-            updatedInstructions.splice(destination.index, 0, movedItem);
-
-            // Update the selectedTab with the reordered instructions
-            updateTabAttribute(instructionType, updatedInstructions);
-        }
     };
 
     const renderInstructionList = (instructionType) => {
@@ -293,7 +276,6 @@ const AppSidebar = ({
                                             {...provided.draggableProps}
                                             className="instruction-item"
                                         >
-                                            {/* Existing instruction item content */}
                                             <input
                                                 type="text"
                                                 value={instruction.label || ''}
@@ -372,6 +354,26 @@ const AppSidebar = ({
         );
     };
 
+    const onInstructionDragEnd = (result) => {
+        const { source, destination } = result;
+
+        // If dropped outside the list, do nothing
+        if (!destination) return;
+
+        // Extract the instructionType from the droppableId
+        const instructionType = source.droppableId.replace('droppable-instruction-list-', '');
+
+        // Only handle reordering within the same instruction type
+        if (source.droppableId === destination.droppableId) {
+            const updatedInstructions = Array.from(selectedTab[instructionType]);
+            const [movedItem] = updatedInstructions.splice(source.index, 1);
+            updatedInstructions.splice(destination.index, 0, movedItem);
+
+            // Update the selectedTab with the reordered instructions
+            updateTabAttribute(instructionType, updatedInstructions);
+        }
+    };
+
     const renderMediaInstructions = () => {
         if (!selectedTab) return null;
 
@@ -418,7 +420,6 @@ const AppSidebar = ({
             </DragDropContext>
         );
     };
-
 
     const getTabType = (tab) => {
         if (!tab) {
@@ -1056,7 +1057,7 @@ const AppSidebar = ({
 
                 {/* Properties Section */}
                 <div className="collapsible-section">
-                    <h3 onClick={() => toggleSection('mainField')} className={sections.mainField ? 'active' : ''}>
+                    <h3 onClick={() => toggleSection('main')} className={sections.main ? 'active' : ''}>
                         Properties
                     </h3>
                     {sections.main && (

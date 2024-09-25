@@ -1593,7 +1593,7 @@ button {
     margin: 0 !important;
     padding: 1px;
     padding-left: 5px;
-    background-color: #021639b9;
+    background-color: #021639;
     border-bottom: 1px solid #808080;
     box-sizing: border-box;
     display: inline-block;
@@ -3413,7 +3413,6 @@ input[type="radio"]:checked+.radioDot::before {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #2c3e50;
     color: white;
     height: 140px;
 }
