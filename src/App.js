@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
-import { workflowData as importedWorkflowData } from './data/workflowData';
+import React, { useState, useEffect, useCallback } from 'react';
+//import { workflowData as importedWorkflowData } from './data/workflowData';
 import AppHeader from './components/AppHeader';
 import Sidebar from './components/Sidebar';
 import TabContainer from './components/TabContainer';
@@ -8,34 +8,124 @@ import TabContent from './components/TabContent';
 import HelpPopup from './components/HelpPopup';
 import './styles/WorkflowEditor.css';
 import { DragDropContext } from 'react-beautiful-dnd'; // Import react-beautiful-dnd
-import { fieldOptions, tabOptions } from './models/models';
+import { fieldOptions, tabOptions, workflowAttributes, tabAttributes } from './models/models';
+import WorkflowLoader from './components/WorkflowLoader';
+import Login from './components/Login';
+import { v4 as uuidv4 } from 'uuid';
 
 function App() {
   const [groups, setGroups] = useState([]);
   const [fieldCount, setFieldCount] = useState(0);
   const [itemCount, setItemCount] = useState(0);
-  const [selectedModules, setSelectedModules] = useState([]);
   const [activeWorkflowTab, setActiveWorkflowTab] = useState('');
+  const [moduleKeys, setModuleKeys] = useState([]);
   const [activeSidebarTab, setActiveSidebarTab] = useState('tab1');
-  const [selectedTab, setSelectedTab] = useState(null);
   const [selectedField, setSelectedField] = useState(null);
+  const [selectedWorkflowModuleKey, setSelectedWorkflowModuleKey] = useState(null);
+  const [selectedWorkflowOptionValue, setSelectedWorkflowOptionValue] = useState(null);
   const [workflowTitle, setWorkflowTitle] = useState('');
   const [helpPosition, setHelpPosition] = useState({ top: 0, left: 0 });
   const [activeHelp, setActiveHelp] = useState(null);
-  const [workflowData, setWorkflowData] = useState(importedWorkflowData);
+  const [workflowData, setWorkflowData] = useState(null);
+  const [apiToken, setApiToken] = useState(null);
+  const [isWorkflowLoaded, setIsWorkflowLoaded] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const setTabs = (newTabs) => {
-    setSelectedModules(newTabs);
+  useEffect(() => {
+    const storedToken = localStorage.getItem('apiToken');
+    if (storedToken) {
+      setApiToken(storedToken);
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogin = (token) => {
+    setApiToken(token);
+    setIsLoggedIn(true);
   };
 
+  const handleLogout = () => {
+    localStorage.clear();
+    setIsWorkflowLoaded(false);
+    setWorkflowData(null);
+    setIsLoggedIn(false);
+  };
+
+  useEffect(() => {
+    if (selectedField && workflowData) {
+      // Update workflowData whenever selectedField changes
+      setWorkflowData((prevWorkflowData) => {
+        // Ensure that both template and modules are defined before proceeding
+        if (!prevWorkflowData.template || !prevWorkflowData.template.modules) {
+          return prevWorkflowData; // Return the unmodified state if template or modules are missing
+        }
+
+        const updatedModules = prevWorkflowData.template.modules.map((module) => {
+          if (module.key === activeWorkflowTab && module.key.startsWith('F')) {
+            return {
+              ...module,
+              groups: module.groups.map((group) => {
+                // Check if the group matches the selectedField's label
+                if (group.label === selectedField?.label) {
+                  // Update the entire group with the selectedField's changes
+                  return {
+                    ...group,
+                    ...selectedField,
+                  };
+                }
+                return group;
+              }),
+            };
+          }
+          return module;
+        });
+
+        return {
+          ...prevWorkflowData,
+          template: {
+            ...prevWorkflowData.template,
+            modules: updatedModules,
+          },
+        };
+      });
+    }
+  }, [activeWorkflowTab, selectedField, workflowData]);
+
   const handleTabClick = (tabKey) => {
-    setSelectedTab(tabKey);
+    setActiveWorkflowTab(tabKey);
     setActiveSidebarTab('tab2');
   };
 
+  const handleBackToLoader = () => {
+    setIsWorkflowLoaded(false);  // Set back to false to show WorkflowLoader
+    setWorkflowData(null);       // Optionally reset workflow data if necessary
+    setModuleKeys([]);           // Clear any module-related state
+    setActiveWorkflowTab('');
+    setSelectedField(null);
+  };
+
   const handleFieldClick = (field) => {
-    setSelectedField(field);
-    setActiveSidebarTab('tab3');
+    if (!workflowData) return;
+
+    const activeModule = workflowData.template.modules.find(
+      (module) => module.key === activeWorkflowTab
+    );
+
+    if (activeModule) {
+      // Find the field using the label
+      const activeGroup = activeModule.groups?.find((group) => group.label === field.label);
+
+      if (activeGroup) {
+        setSelectedField(activeGroup);
+        setActiveSidebarTab('tab3'); // Switch to field properties in the sidebar
+      }
+    }
+  };
+
+  const handleWorkflowDataLoaded = (data) => {
+    const dataWithIds = assignUniqueIdsToGroups(data);
+    setWorkflowData(dataWithIds);
+    setIsWorkflowLoaded(true);
   };
 
   const handleWorkflowChange = (key, value) => {
@@ -49,58 +139,236 @@ function App() {
   };
 
   const handleTabChange = (key, value) => {
-    setSelectedTab((prevTab) => ({
-      ...prevTab,
-      [key]: value,
-    }));
+    setWorkflowData((prevData) => {
+      const updatedModules = prevData.template.modules.map((module) => {
+        if (module.key === activeWorkflowTab) {
+          return {
+            ...module,
+            [key]: value,
+          };
+        }
+        return module;
+      });
+
+      return {
+        ...prevData,
+        template: {
+          ...prevData.template,
+          modules: updatedModules,
+        },
+      };
+    });
   };
 
-  const handleFieldChange = (key, value) => {
-    setSelectedField((prevField) => ({
-      ...prevField,
-      [key]: value,
-    }));
+  const onFieldChange = (fieldKey, newValue, prevLabel = null) => {
+    setSelectedField((prevField) => {
+      const updatedField = { ...prevField, [fieldKey]: newValue };
+
+      // Also update the workflowData to keep everything in sync
+      setWorkflowData((prevWorkflowData) => {
+        const updatedModules = prevWorkflowData.template.modules.map((module) => {
+          if (module.key === activeWorkflowTab) {
+            return {
+              ...module,
+              groups: module.groups?.map((group) => {
+                // Match the group by label since it's unique
+                const labelToMatch = fieldKey === 'label' && prevLabel ? prevLabel : updatedField.label;
+                if (group.label === labelToMatch) {
+                  return updatedField;
+                }
+                return group;
+              }),
+            };
+          }
+          return module;
+        });
+
+        return {
+          ...prevWorkflowData,
+          template: {
+            ...prevWorkflowData.template,
+            modules: updatedModules,
+          },
+        };
+      });
+
+      return updatedField;
+    });
   };
 
-  const workflowOptions = (workflowData.template?.modules || [])
-    .filter(
-      (module) =>
-        module.logic_branch && module.logic_branch.variable === '{WORKFLOW_MODULES}'
-    )
-    .flatMap((module) => module.logic_branch.options);
 
-  const handleSelectWorkflow = (workflowValue) => {
-    if (workflowValue) {
-      const moduleKeys = workflowValue.split(', ');
-
-      const filteredModules = (workflowData.template?.modules || []).filter((module) =>
-        moduleKeys.includes(module.key) && ['F', 'M', 'E', 'C'].includes(module.key[0])
+  const onFieldItemsChange = (itemIndex, newItemValue) => {
+    setSelectedField((prevField) => {
+      // Ensure we're dealing with a field that has items
+      const updatedItems = prevField.items?.map((item, index) =>
+        index === itemIndex ? { ...item, ...newItemValue } : item
       );
 
-      const sortedModules = moduleKeys
-        .filter(key => ['F', 'M', 'E', 'C'].includes(key[0]))
-        .map(key => filteredModules.find(module => module.key === key))
-        .filter(Boolean);
+      const updatedField = { ...prevField, items: updatedItems };
 
-      setSelectedModules(sortedModules);
+      // Update workflowData to keep in sync
+      setWorkflowData((prevWorkflowData) => {
+        const updatedModules = prevWorkflowData.template.modules.map((module) => {
+          if (module.key === activeWorkflowTab) {
+            return {
+              ...module,
+              groups: module.groups?.map((group) => {
+                // Match the group by label and update items
+                if (group.label === updatedField.label) {
+                  return updatedField;
+                }
+                return group;
+              }),
+            };
+          }
+          return module;
+        });
 
-      const selectedOption = workflowOptions.find(option => option.value === workflowValue);
-      if (selectedOption) {
-        setWorkflowTitle(selectedOption.label);
+        return {
+          ...prevWorkflowData,
+          template: {
+            ...prevWorkflowData.template,
+            modules: updatedModules,
+          },
+        };
+      });
+
+      return updatedField;
+    });
+  };
+
+  const assignUniqueIdsToGroups = (data) => {
+    const updatedData = { ...data };
+    updatedData.template.modules = updatedData.template.modules.map((module) => {
+      if (module.groups) {
+        module.groups = module.groups.map((group) => {
+          if (!group.id) {
+            group.id = uuidv4();
+          }
+          group.label = group.label || 'Unnamed Field';
+          // Add any other default values as needed...
+          return group;
+        });
       }
+      return module;
+    });
+    return updatedData;
+  };
 
-      if (sortedModules.length > 0) {
-        setActiveWorkflowTab(sortedModules[0].key);
-      }
-    } else {
-      setSelectedModules([]);
-      setActiveWorkflowTab('');
-      setWorkflowTitle('');
+  const handleSaveJSON = () => {
+    // Ensure workflowData exists
+    if (!workflowData) {
+      console.warn('No workflow data available to save.');
+      return;
+    }
+
+    try {
+      // Convert workflowData to JSON string
+      const jsonString = JSON.stringify(workflowData, null, 2);
+      // Create a Blob from the JSON string
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      // Create a link element
+      const link = document.createElement('a');
+      // Set the download attribute with a filename
+      link.download = `${workflowTitle || 'workflowData'}.json`;
+      // Create an object URL and set it as the href of the link
+      link.href = window.URL.createObjectURL(blob);
+      // Append the link to the body
+      document.body.appendChild(link);
+      // Programmatically click the link to trigger the download
+      link.click();
+      // Clean up by removing the link and revoking the object URL
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error('Error saving JSON:', error);
     }
   };
 
+  const workflowOptions = workflowData
+    ? workflowData.template?.modules
+      .filter(
+        (module) =>
+          module.logic_branch && module.logic_branch.variable === '{WORKFLOW_MODULES}'
+      )
+      .flatMap((module) =>
+        module.logic_branch.options.map((option) => ({
+          ...option,
+          moduleKey: module.key, // Include the module's key
+        }))
+      )
+    : [];
+
+  const handleSelectWorkflow = (workflowValue) => {
+    if (workflowValue) {
+      const keys = workflowValue.split(', ');
+
+      // Filter the keys to only include ones starting with 'F', 'M', 'E', 'C'
+      const filteredKeys = keys.filter(key => ['F', 'M', 'E', 'C'].includes(key[0]));
+
+      // Store filtered module keys
+      setModuleKeys(filteredKeys);
+
+      // Find the selected option
+      const selectedOption = workflowOptions.find(option => option.value === workflowValue);
+      if (selectedOption) {
+        setWorkflowTitle(selectedOption.label);
+        setSelectedWorkflowOptionValue(selectedOption.value);
+        setSelectedWorkflowModuleKey(selectedOption.moduleKey);
+      }
+
+      if (filteredKeys.length > 0) {
+        setActiveWorkflowTab(filteredKeys[0]);
+      }
+    } else {
+      setModuleKeys([]);
+      setActiveWorkflowTab('');
+      setWorkflowTitle('');
+      setSelectedWorkflowOptionValue(null);
+      setSelectedWorkflowModuleKey(null);
+    }
+  };
+
+  const handleWorkflowTitleChange = (newTitle) => {
+    setWorkflowTitle(newTitle);
+
+    // Update the label in workflowData
+    setWorkflowData((prevData) => {
+      const updatedModules = prevData.template.modules.map((module) => {
+        if (module.key === selectedWorkflowModuleKey && module.logic_branch && module.logic_branch.options) {
+          const updatedOptions = module.logic_branch.options.map(option => {
+            if (option.value === selectedWorkflowOptionValue) {
+              return {
+                ...option,
+                label: newTitle,
+              };
+            }
+            return option;
+          });
+          return {
+            ...module,
+            logic_branch: {
+              ...module.logic_branch,
+              options: updatedOptions,
+            },
+          };
+        }
+        return module;
+      });
+
+      return {
+        ...prevData,
+        template: {
+          ...prevData.template,
+          modules: updatedModules,
+        },
+      };
+    });
+  };
+
+
   // Helper function to create new tabs based on the type
-  const createNewTab = (tabOption) => {
+  const createNewTab = (tabOption, workflowData) => {
     // Determine the prefix based on the tab type
     let prefix = '';
     switch (tabOption.type) {
@@ -123,20 +391,24 @@ function App() {
         prefix = 'U';  // Unknown or unhandled types, use a default prefix
     }
 
-    // **Update**: Find the next available number for the prefix dynamically
-    const updatedSelectedModules = [...selectedModules];  // Make sure we work with the updated state
-    const existingTabsWithPrefix = updatedSelectedModules
-      .filter(tab => tab.key.startsWith(prefix)) // Get all tabs with the same prefix
-      .map(tab => parseInt(tab.key.slice(prefix.length)))     // Extract the number part of the key, after the prefix length
-      .filter(number => !isNaN(number));          // Ensure we only work with valid numbers
+    // Get the existing modules from workflowData
+    const existingModules = workflowData.template.modules;
+
+    // Get the modules with the same prefix
+    const existingTabsWithPrefix = existingModules
+      .filter(tab => tab.key.startsWith(prefix))
+      .map(tab => parseInt(tab.key.slice(prefix.length)))
+      .filter(number => !isNaN(number));
 
     // Find the next available number
     const nextNumber = existingTabsWithPrefix.length > 0
-      ? Math.max(...existingTabsWithPrefix) + 1   // Find the next available number
-      : 1;                                        // If no existing tabs, start with 1
+      ? Math.max(...existingTabsWithPrefix) + 1
+      : 1;
 
-    const newTabKey = `${prefix}${nextNumber}`;     // Combine prefix and number for the new key
-    const newTabCount = updatedSelectedModules.filter(tab => tab.type === tabOption.type).length + 1;
+    const newTabKey = `${prefix}${nextNumber}`;
+
+    // Count the number of tabs of this type
+    const newTabCount = existingModules.filter(tab => tab.type === tabOption.type).length + 1;
 
     // Create the new tab object
     const newTab = {
@@ -145,9 +417,9 @@ function App() {
       type: tabOption.type,
       groups: [],
       tab_bar_item: {
-        title: `New ${tabOption.type} Tab ${newTabCount}`, // Title now inside tab_bar_item
-        image_name: '', // Adjust as necessary
-        url: '', // Adjust as necessary
+        title: `New ${tabOption.type} Tab ${newTabCount}`,
+        image_name: '',
+        url: '',
       }
     };
 
@@ -176,10 +448,6 @@ function App() {
 
   const handleDragEnd = (result) => {
     const { source, destination } = result;
-
-    // Log the source and destination for debugging
-    console.log('Drag ended:', { source, destination });
-
     // If dropped outside any droppable, do nothing
     if (!destination) {
       console.log('Dropped outside any valid droppable.');
@@ -187,41 +455,29 @@ function App() {
     }
 
     // Reordering tabs within the droppable-tab-list
-    if (source.droppableId === 'droppable-tab-list' && destination.droppableId === 'droppable-tab-list') {
-      console.log('Reordering within droppable-tab-list.');
+    if (
+      source.droppableId === 'droppable-tab-list' &&
+      destination.droppableId === 'droppable-tab-list'
+    ) {
+      const reorderedKeys = Array.from(moduleKeys);
+      const [movedKey] = reorderedKeys.splice(source.index, 1);
+      reorderedKeys.splice(destination.index, 0, movedKey);
 
-      const reorderedTabs = Array.from(selectedModules);
-      const [movedTab] = reorderedTabs.splice(source.index, 1);
-      reorderedTabs.splice(destination.index, 0, movedTab);
-
-      setSelectedModules(reorderedTabs);
-      console.log('Reordered tabs:', reorderedTabs);
-      return;
-    }
-
-    // Reordering tabs within the droppable-tab-list
-    if (source.droppableId === 'droppable-tab-list' && destination.droppableId === 'droppable-tab-list') {
-      console.log('Reordering within droppable-tab-list.');
-
-      const updatedTabs = [...selectedModules];
-      const [movedTab] = updatedTabs.splice(source.index, 1);
-      updatedTabs.splice(destination.index, 0, movedTab);  // Insert at the new index
-
-      setSelectedModules(updatedTabs);
-      console.log('Reordered tabs:', updatedTabs);
+      setModuleKeys(reorderedKeys);
       return;
     }
 
     // Adding new tabs from new-tab-container to the droppable-tab-list
-    if (source.droppableId === 'new-tab-container' && destination.droppableId === 'droppable-tab-list') {
-      console.log('Adding new tab from new-tab-container to droppable-tab-list.');
+    if (
+      source.droppableId === 'new-tab-container' &&
+      destination.droppableId === 'droppable-tab-list'
+    ) {
 
-      const tabOption = tabOptions.templates[source.index]; // Get the tab option being dragged
-      console.log('Tab option to add:', tabOption);
+      const tabOption = tabOptions.templates[source.index];
 
       // Check if a "Share" tab already exists and prevent adding another
-      if (tabOption.type === "Share") {
-        const shareTabExists = selectedModules.some(tab => tab.key.startsWith('E'));
+      if (tabOption.type === 'Share') {
+        const shareTabExists = moduleKeys.some((key) => key.startsWith('E'));
         if (shareTabExists) {
           console.warn('A Share tab already exists!');
           return;
@@ -229,25 +485,35 @@ function App() {
       }
 
       // Create the new tab based on the type (Checklist, Media, etc.)
-      const newTab = createNewTab(tabOption);
+      const newTab = createNewTab(tabOption, workflowData);
 
-      // Insert the new tab into the selectedModules array at the dropped index
-      const updatedTabs = [...selectedModules];
-      updatedTabs.splice(destination.index, 0, newTab);
-      setSelectedModules(updatedTabs);
+      // Update workflowData by adding the new module
+      setWorkflowData((prevData) => {
+        const updatedModules = [...prevData.template.modules, newTab];
+        return {
+          ...prevData,
+          template: {
+            ...prevData.template,
+            modules: updatedModules,
+          },
+        };
+      });
 
-      console.log('Added new tab:', newTab);
-      console.log('Updated tabs:', updatedTabs);
+      // Insert the new tab key into moduleKeys at the dropped index
+      const updatedModuleKeys = [...moduleKeys];
+      updatedModuleKeys.splice(destination.index, 0, newTab.key);
+      setModuleKeys(updatedModuleKeys);
       return;
     }
 
-    // If dropping from the new-item-container to the droppable-field-list (copy)
-    if (source.droppableId === 'new-item-container' && destination.droppableId === 'droppable-field-list') {
-      console.log('Copying from new-item-container to droppable-field-list.');
+    // Adding new fields from new-item-container to droppable-field-list
+    if (
+      source.droppableId === 'new-item-container' &&
+      destination.droppableId === 'droppable-field-list'
+    ) {
 
-      // Make sure the correct field is being selected
+      // Get the field template
       const fieldToCopy = fieldOptions.templates[source.index];
-      console.log('Field to copy:', fieldToCopy);
 
       const fieldType = fieldToCopy.type;
 
@@ -260,7 +526,13 @@ function App() {
 
       // Function to get default items with proper labels and placeholders
       const getDefaultItems = () => {
-        const needsDefaultItems = ['Radio', 'Checkbox', 'PassFail', 'SingleDropDownList', 'MultiDropDownList'];
+        const needsDefaultItems = [
+          'Radio',
+          'Checkbox',
+          'PassFail',
+          'SingleDropDownList',
+          'MultiDropDownList',
+        ];
 
         if (needsDefaultItems.includes(fieldType)) {
           // Increment itemCount for unique item placeholders
@@ -269,58 +541,163 @@ function App() {
           setItemCount(updatedItemCount2); // Increment by 2 for two items
 
           return [
-            { name: `item1-${Date.now()}`, title: `---New Item Placeholder ${updatedItemCount1}---` },
-            { name: `item2-${Date.now()}`, title: `---New Item Placeholder ${updatedItemCount2}---` }
+            {
+              name: `item1-${Date.now()}`,
+              title: `---New Item Placeholder ${updatedItemCount1}---`,
+            },
+            {
+              name: `item2-${Date.now()}`,
+              title: `---New Item Placeholder ${updatedItemCount2}---`,
+            },
           ];
         }
-        return [];
+        return undefined;
       };
 
-      // Create the copied field with the placeholder and default items if necessary
+      const defaultItems = getDefaultItems();
+
       const copiedField = {
         ...fieldToCopy,
-        id: `copied-${Date.now()}`,  // Ensure unique ID
-        label: placeholderLabel,      // Add the placeholder label
-        items: getDefaultItems()      // Add default items if applicable
+        id: uuidv4(),
+        label: placeholderLabel,
+        ...(defaultItems && { items: defaultItems }),
       };
-      console.log('Copied field:', copiedField);
 
-      // Add the copied field to the specific destination index
-      const updatedTabs = [...selectedModules];
-      const activeTab = updatedTabs.find(tab => tab.key === activeWorkflowTab);
-      if (activeTab) {
-        const updatedGroups = Array.from(activeTab.groups || []);
-        updatedGroups.splice(destination.index, 0, copiedField);  // Insert at the drop index
-        activeTab.groups = updatedGroups;
+      // Update the active module's groups in workflowData
+      const activeModuleKey = activeWorkflowTab;
+      setWorkflowData((prevData) => {
+        const updatedModules = prevData.template.modules.map((module) => {
+          if (module.key === activeModuleKey) {
+            const updatedGroups = Array.from(module.groups || []);
+            updatedGroups.splice(destination.index, 0, copiedField);
+            return {
+              ...module,
+              groups: updatedGroups,
+            };
+          }
+          return module;
+        });
 
-        console.log('Updated activeTab.groups:', activeTab.groups);
-      }
-
-      setSelectedModules(updatedTabs); // Set the updated selectedModules
+        return {
+          ...prevData,
+          template: {
+            ...prevData.template,
+            modules: updatedModules,
+          },
+        };
+      });
       return;
     }
 
-    // If reordering within the droppable-field-list
-    if (source.droppableId === 'droppable-field-list' && destination.droppableId === 'droppable-field-list') {
-      console.log('Reordering within droppable-field-list.');
+    // Reordering fields within the droppable-field-list
+    if (
+      source.droppableId === 'droppable-field-list' &&
+      destination.droppableId === 'droppable-field-list'
+    ) {
 
-      const updatedTabs = [...selectedModules];
-      const activeTab = updatedTabs.find(tab => tab.key === activeWorkflowTab);
+      const activeModuleKey = activeWorkflowTab;
 
-      if (activeTab) {
-        const reorderedGroups = Array.from(activeTab.groups);
-        const [movedGroup] = reorderedGroups.splice(source.index, 1);
-        reorderedGroups.splice(destination.index, 0, movedGroup);  // Insert at the new index
+      setWorkflowData((prevData) => {
+        const updatedModules = prevData.template.modules.map((module) => {
+          if (module.key === activeModuleKey) {
+            const reorderedGroups = Array.from(module.groups || []);
+            const [movedGroup] = reorderedGroups.splice(source.index, 1);
+            reorderedGroups.splice(destination.index, 0, movedGroup);
 
-        activeTab.groups = reorderedGroups;
-        setSelectedModules(updatedTabs);
-        console.log('Reordered groups:', reorderedGroups);
-      }
+            return {
+              ...module,
+              groups: reorderedGroups,
+            };
+          }
+          return module;
+        });
+
+        return {
+          ...prevData,
+          template: {
+            ...prevData.template,
+            modules: updatedModules,
+          },
+        };
+      });
       return;
     }
 
     // Handle any other custom logic or cases
     console.log('Unhandled drag and drop case.');
+  };
+
+  const onDeleteField = () => {
+    if (selectedField) {
+      setWorkflowData((prevWorkflowData) => {
+        const updatedModules = prevWorkflowData.template.modules.map((module) => {
+          if (module.key === activeWorkflowTab) {
+            return {
+              ...module,
+              groups: module.groups.filter(
+                (group) => group.label !== selectedField.label
+              ),
+            };
+          }
+          return module;
+        });
+
+        return {
+          ...prevWorkflowData,
+          template: {
+            ...prevWorkflowData.template,
+            modules: updatedModules,
+          },
+        };
+      });
+      setSelectedField(null); // Clear the selectedField after deletion
+    }
+  };
+
+  // In App.js
+
+  const onDeleteTab = () => {
+    if (activeWorkflowTab) {
+      setWorkflowData((prevWorkflowData) => {
+        const updatedModules = prevWorkflowData.template.modules.filter(
+          (module) => module.key !== activeWorkflowTab
+        );
+
+        return {
+          ...prevWorkflowData,
+          template: {
+            ...prevWorkflowData.template,
+            modules: updatedModules,
+          },
+        };
+      });
+
+      setModuleKeys((prevModuleKeys) => {
+        const updatedModuleKeys = prevModuleKeys.filter(
+          (key) => key !== activeWorkflowTab
+        );
+        return updatedModuleKeys;
+      });
+
+      // Update activeWorkflowTab
+      setActiveWorkflowTab((prevActiveTab) => {
+        // If there are other tabs, set the active tab to the first one
+        if (moduleKeys.length > 1) {
+          const index = moduleKeys.indexOf(activeWorkflowTab);
+          const nextIndex = index > 0 ? index - 1 : 0;
+          return moduleKeys.filter((key) => key !== activeWorkflowTab)[nextIndex];
+        } else {
+          // No tabs left
+          return '';
+        }
+      });
+
+      // Reset the sidebar to workflow properties or another appropriate tab
+      setActiveSidebarTab('tab1');
+
+      // Clear selectedField if necessary
+      setSelectedField(null);
+    }
   };
 
   const getDefaultItems = (fieldType) => {
@@ -342,7 +719,7 @@ function App() {
   };
 
   const renderTabContent = (tabKey) => {
-    const activeModule = selectedModules.find((tab) => tab.key === tabKey);
+    const activeModule = workflowData.template.modules.find((module) => module.key === tabKey);
     if (activeModule) {
       return (
         <TabContent
@@ -356,45 +733,127 @@ function App() {
     return null;
   };
 
+  const handleTabAttributeChange = (attributeName, newValue) => {
+    setWorkflowData((prevData) => {
+      const updatedModules = prevData.template.modules.map((module) => {
+        if (module.key === activeWorkflowTab) {
+          if (attributeName === 'title') {
+            // Update the nested tab_bar_item.title property
+            return {
+              ...module,
+              tab_bar_item: {
+                ...module.tab_bar_item,
+                title: newValue,
+              },
+            };
+          } else {
+            // Update other attributes as before
+            return {
+              ...module,
+              [attributeName]: newValue,
+            };
+          }
+        }
+        return module;
+      });
+
+      return {
+        ...prevData,
+        template: {
+          ...prevData.template,
+          modules: updatedModules,
+        },
+      }
+    });
+  };
+
+  if (!isLoggedIn) {
+    // If not logged in, show the login page
+    return <Login onLogin={() => setIsLoggedIn(true)} />;
+  }
+
+  if (!isWorkflowLoaded) {
+    return (
+      <WorkflowLoader onWorkflowDataLoaded={handleWorkflowDataLoaded} />
+    );
+  }
 
   return (
     <div className="App">
-      <AppHeader workflowOptions={workflowOptions} onSelectWorkflow={handleSelectWorkflow} />
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <div id="appContainer" className="app-container" style={{ display: selectedModules.length > 0 ? 'block' : 'none' }}>
-          <div className="container">
-            <Sidebar
-              activeTab={activeSidebarTab}
-              onTabChange={setActiveSidebarTab}
-              workflowData={workflowData}
-              selectedTab={selectedTab}
-              selectedField={selectedField}
-              onWorkflowChange={handleWorkflowChange}
-              onTabChangeHandler={handleTabChange}
-              onFieldChange={handleFieldChange}
-              fieldOptions={fieldOptions}
-              tabOptions={tabOptions}
-              handleDragEnd={handleDragEnd}
-            />
-            {workflowTitle && (
-              <h1 className="workflow-title">{workflowTitle}</h1>
-            )}
-            <TabContainer
-              tabs={selectedModules}
-              activeWorkflowTab={activeWorkflowTab}
-              setActiveWorkflowTab={setActiveWorkflowTab}
-              setTabs={setTabs}
-              handleTabClick={handleTabClick}
-            />
-          </div>
-          <div id="tabContentContainer" className="tabcontent">
-            {activeWorkflowTab && renderTabContent(activeWorkflowTab)}
-          </div>
+      {!apiToken ? (
+        <Login onLogin={handleLogin} />
+      ) : (
+        <div>
+          {!workflowData ? (
+            // Render WorkflowLoader if workflowData is not yet loaded
+            <WorkflowLoader onWorkflowDataLoaded={handleWorkflowDataLoaded} />
+          ) : (
+            // Render the main application when workflowData is available
+            <div>
+              <AppHeader
+                workflowOptions={workflowOptions}
+                onSelectWorkflow={handleSelectWorkflow}
+                onLogout={handleLogout}
+                onBack={handleBackToLoader}
+                onSaveJSON={handleSaveJSON}
+              />
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <div id="appContainer" className="app-container" style={{ display: moduleKeys.length > 0 ? 'block' : 'none' }}>
+                  <div className="container">
+                    <Sidebar
+                      activeTab={activeSidebarTab}
+                      onTabChange={setActiveSidebarTab}
+                      activeWorkflowTab={activeWorkflowTab}
+                      workflowData={workflowData}
+                      selectedTab={
+                        workflowData
+                          ? workflowData.template.modules.find(
+                            (module) => module.key === activeWorkflowTab
+                          )
+                          : null
+                      }
+                      selectedField={selectedField}
+                      setSelectedField={setSelectedField}
+                      onWorkflowChange={handleWorkflowChange}
+                      onTabChangeHandler={handleTabChange}
+                      onFieldChange={onFieldChange}
+                      onFieldItemsChange={onFieldItemsChange}
+                      fieldOptions={fieldOptions}
+                      tabOptions={tabOptions}
+                      handleDragEnd={handleDragEnd}
+                      onDeleteField={onDeleteField}
+                      onDeleteTab={onDeleteTab}
+                      onTabAttributeChange={handleTabAttributeChange}
+                      workflowAttributes={workflowAttributes}
+                      tabAttributes={tabAttributes}
+                      setWorkflowData={setWorkflowData}
+                      workflowTitle={workflowTitle}
+                      onWorkflowTitleChange={handleWorkflowTitleChange}
+                    />
+                    {workflowTitle && (
+                      <h1 className="workflow-title">{workflowTitle}</h1>
+                    )}
+                    <TabContainer
+                      moduleKeys={moduleKeys}
+                      workflowData={workflowData}
+                      activeWorkflowTab={activeWorkflowTab}
+                      setActiveWorkflowTab={setActiveWorkflowTab}
+                      handleTabClick={handleTabClick}
+                    />
+                  </div>
+                  <div id="tabContentContainer" className="tabcontent">
+                    {activeWorkflowTab && renderTabContent(activeWorkflowTab)}
+                  </div>
+                </div>
+              </DragDropContext>
+              <HelpPopup activeHelp={activeHelp} helpPosition={helpPosition} />
+            </div>
+          )}
         </div>
-      </DragDropContext>
-      <HelpPopup activeHelp={activeHelp} helpPosition={helpPosition} />
+      )}
     </div>
   );
 }
 
 export default App;
+

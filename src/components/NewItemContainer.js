@@ -10,7 +10,7 @@ const NewItemContainer = ({ fieldOptions, onDragEnd }) => {
                     {...provided.droppableProps}
                     style={{ width: 'auto', padding: 0 }}
                 >
-                    <h4 style={{ textAlign: 'center' }}>Add New Field</h4>
+                    <h4 style={{ textAlign: 'center', fontSize: '16pt', borderBottom: '1px solid lightgrey', fontFamily: 'Overpass, sans-serif' }}>Add New Field</h4>
                     {fieldOptions.templates.map((field, index) => (
                         <Draggable key={field.type} draggableId={field.type} index={index}>
                             {(provided) => (
@@ -28,6 +28,10 @@ const NewItemContainer = ({ fieldOptions, onDragEnd }) => {
                                         textAlign: 'center',
                                         backgroundColor: 'white',
                                         borderRadius: '50px',
+                                        height: '20px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
                                         ...provided.draggableProps.style,
                                     }}
                                 >

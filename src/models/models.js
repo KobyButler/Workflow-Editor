@@ -612,6 +612,115 @@ export const workflowAttributes = {
             Description: 'Url for video to be shown when the user signs in',
             Default: null,
             Main_Property: false
+        },
+        {
+            Option: 'Default Reference Capture',
+            Name: 'key',
+            Type: 'String',
+            Applies_To: [],
+            Description: '',
+            Default: undefined,
+            Main_Property: false
+        },
+        {
+            Option: 'Reference Entry Description',
+            Name: 'description',
+            Type: 'String',
+            Applies_To: [],
+            Description: '',
+            Default: 'Name your new record, or enter a reference 1.',
+            Main_Property: false
+        },
+        {
+            Option: 'Reference Entry Prompt',
+            Name: 'prompt',
+            Type: 'String',
+            Applies_To: [],
+            Description: '',
+            Default: 'Enter name or reference 1',
+            Main_Property: false
+        },
+        {
+            Option: 'Keyboard',
+            Name: 'keyboard',
+            Type: 'String',
+            Applies_To: [],
+            Description: '',
+            Default: '',
+            Main_Property: false
+        },
+        {
+            Option: 'No Spaces Allowed',
+            Name: 'no_spaces_allowed',
+            Type: 'Boolean',
+            Applies_To: [],
+            Description: '',
+            Default: false,
+            Main_Property: false
+        },
+        {
+            Option: 'Auto-capitalization',
+            Name: 'keyboard_autocapitalization_type',
+            Type: 'String',
+            Applies_To: [],
+            Description: 'Directs mobile client to capitalize either all letters, the first letter in a sentence or turns off auto-capitalization, respectively.',
+            Default: 'none',
+            Main_Property: false
+        },
+        {
+            Option: 'Asset Autocomplete',
+            Name: 'asset_autocomplete',
+            Type: 'String',
+            Applies_To: [],
+            Description: 'URL to query when typing characters in reference capture textbox. = {SEARCH} will be replaced with the characters.',
+            Default: '',
+            Main_Property: true
+        },
+        {
+            Option: 'Asset Data',
+            Name: 'asset_data',
+            Type: 'String',
+            Applies_To: [],
+            Description: 'URL to query for asset data given the= {ID} returned by the asset autocomplete call.',
+            Default: '',
+            Main_Property: true
+        },
+        {
+            Option: 'Reference Number Locking',
+            Name: 'ref_num_lock',
+            Type: 'String',
+            Applies_To: [],
+            Description: 'Allows control over the ability to create new units via the Record360 mobile app. This allows managers to maintain accurate and consistent data about their inventory.',
+            Default: 'open',
+            Main_Property: true
+        },
+
+        {
+            Option: 'Notations Title',
+            Name: 'title',
+            Type: 'String',
+            Applies_To: [],
+            Description: 'List of all notations keywords will be available for tagging photos',
+            Default: [],
+            Main_Property: false
+        },
+        {
+            Option: 'Notations Rank',
+            Name: 'rank',
+            Type: 'Integer',
+            Applies_To: [],
+            Description: 'List of all notations keywords will be available for tagging photos',
+            Default: undefined,
+            Main_Property: false
+        },
+        {
+            Option: 'Allow Multiselect',
+            Name: 'allowmultiselect',
+            Type: 'Boolean',
+            Applies_To: [],
+            Description: 'Allows more than one notation tag on a single photo',
+            Default: false,
+            Main_Property: false
         }
     ]
 }
@@ -734,461 +843,463 @@ export const notationsAttributes = {
     ]
 }
 
-export const mediaAttributes = {
-    templates: [
-        {
-            Option: 'Force Resolution',
-            Name: 'forced_resolution',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Media' }
-            ],
-            Description: '"Forced all users in a location to a certain resolution, must be one of the following: “medium”, “high”, “very_high”<br><br>NOTE** - Although forcing ""medium"" resolution can increase upload speed, it can cause the customer to not be able to zoom in or out on photos when viewing them from the dashboard. However, ""High"" resolution lets them. Screen size of the device may also affect the zooming in/out of photos from the dashboard."',
-            Default: '',
-            Main_Property: true
-        },
-        {
-            Option: 'Force Native Mode',
-            Name: 'forced_native_mode',
-            Type: 'Boolean',
-            Applies_To: [
-                { type: 'Media' }
-            ],
-            Description: 'Force users in a location to use native mode by default',
-            Default: false,
-            Main_Property: true
-        },
-        {
-            Option: 'Hide Photo Button',
-            Name: 'hide_photo_button',
-            Type: 'Boolean',
-            Applies_To: [
-                { type: 'Media' }
-            ],
-            Description: 'Hides photo button from media capture screens',
-            Default: false,
-            Main_Property: false
-        },
-        {
-            Option: 'Hide Video Button',
-            Name: 'hide_video_button',
-            Type: 'Boolean',
-            Applies_To: [
-                { type: 'Media' }
-            ],
-            Description: 'Hides video button from media capture screens',
-            Default: false,
-            Main_Property: false
-        },
-        {
-            Option: 'Photo Button Primary',
-            Name: 'photo_button_primary',
-            Type: 'Boolean',
-            Applies_To: [
-                { type: 'Media' }
-            ],
-            Description: '"Switches the position of photo and video buttons. Photo button becomes the bigger center button."',
-            Default: false,
-            Main_Property: true
-        },
-        /*{
-            Option: 'Instructions',
-            Name: 'instructions',
-            Type: 'Array',
-            Applies_To: [
-               { type: 'Media' }
-            ],
-            Description: 'Instructions we want to show to the user while they are capturing media',
-            Default: [],
-            Main_Property: false
-        },
-       {
-            Option: 'New Instructions',
-            Name: 'new_instructions',
-            Type: 'Array',
-            Applies_To: [
-               { type: 'Media' }
-            ],
-            Description: 'Instruction shown only during new/checkout transactions',
-            Default: [],
-            Main_Property: false
-        },
-       {
-            Option: 'Update Instructions',
-            Name: 'update_instructions',
-            Type: 'Array',
-            Applies_To: [
-               { type: 'Media' }
-            ],
-            Description: 'Instructions shown only during update transactions',
-            Default: [],
-            Main_Property: false
-        },
-       {
-            Option: 'Close Instructions',
-            Name: 'close_instructions',
-            Type: 'Array',
-            Applies_To: [
-               { type: 'Media' }
-            ],
-            Description: 'Instruction shown only during return/check-in transactions',
-            Default: [],
-            Main_Property: false
-        }*/
-    ]
-}
+export const tabAttributes = {
+    Media: {
+        templates: [
+            {
+                Option: 'Force Resolution',
+                Name: 'forced_resolution',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Media' }
+                ],
+                Description: '"Forced all users in a location to a certain resolution, must be one of the following: “medium”, “high”, “very_high”<br><br>NOTE** - Although forcing ""medium"" resolution can increase upload speed, it can cause the customer to not be able to zoom in or out on photos when viewing them from the dashboard. However, ""High"" resolution lets them. Screen size of the device may also affect the zooming in/out of photos from the dashboard."',
+                Default: '',
+                Main_Property: true
+            },
+            {
+                Option: 'Force Native Mode',
+                Name: 'forced_native_mode',
+                Type: 'Boolean',
+                Applies_To: [
+                    { type: 'Media' }
+                ],
+                Description: 'Force users in a location to use native mode by default',
+                Default: false,
+                Main_Property: true
+            },
+            {
+                Option: 'Hide Photo Button',
+                Name: 'hide_photo_button',
+                Type: 'Boolean',
+                Applies_To: [
+                    { type: 'Media' }
+                ],
+                Description: 'Hides photo button from media capture screens',
+                Default: false,
+                Main_Property: false
+            },
+            {
+                Option: 'Hide Video Button',
+                Name: 'hide_video_button',
+                Type: 'Boolean',
+                Applies_To: [
+                    { type: 'Media' }
+                ],
+                Description: 'Hides video button from media capture screens',
+                Default: false,
+                Main_Property: false
+            },
+            {
+                Option: 'Photo Button Primary',
+                Name: 'photo_button_primary',
+                Type: 'Boolean',
+                Applies_To: [
+                    { type: 'Media' }
+                ],
+                Description: '"Switches the position of photo and video buttons. Photo button becomes the bigger center button."',
+                Default: false,
+                Main_Property: true
+            }
+            /*{
+                Option: 'Instructions',
+                Name: 'instructions',
+                Type: 'Array',
+                Applies_To: [
+                   { type: 'Media' }
+                ],
+                Description: 'Instructions we want to show to the user while they are capturing media',
+                Default: [],
+                Main_Property: false
+            },
+           {
+                Option: 'New Instructions',
+                Name: 'new_instructions',
+                Type: 'Array',
+                Applies_To: [
+                   { type: 'Media' }
+                ],
+                Description: 'Instruction shown only during new/checkout transactions',
+                Default: [],
+                Main_Property: false
+            },
+           {
+                Option: 'Update Instructions',
+                Name: 'update_instructions',
+                Type: 'Array',
+                Applies_To: [
+                   { type: 'Media' }
+                ],
+                Description: 'Instructions shown only during update transactions',
+                Default: [],
+                Main_Property: false
+            },
+           {
+                Option: 'Close Instructions',
+                Name: 'close_instructions',
+                Type: 'Array',
+                Applies_To: [
+                   { type: 'Media' }
+                ],
+                Description: 'Instruction shown only during return/check-in transactions',
+                Default: [],
+                Main_Property: false
+            }*/
+        ]
+    },
 
-export const mediaInstructionAttributes = {
-    templates: [
-        {
-            Option: 'Auto Advance',
-            Name: 'auto_advance',
-            Type: 'Boolean',
-            Applies_To: [
-                { type: 'Media' }
-            ],
-            Description: 'Will move to next instruction once an image has been captured',
-            Default: false,
-            Main_Property: false
-        },
-        {
-            Option: 'Auto Navigate',
-            Name: 'autonav',
-            Type: 'Boolean',
-            Applies_To: [
-                { type: 'Media' }
-            ],
-            Description: 'Will move to next instruction when instruction checkbox is checked',
-            Default: false,
-            Main_Property: false
-        },
-        {
-            Option: 'Label',
-            Name: 'label',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Media' }
-            ],
-            Description: 'Text that will be displayed in instruction to user.',
-            Default: '',
-            Main_Property: false
-        },
-        {
-            Option: 'Image URL',
-            Name: 'image_url',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Media' }
-            ],
-            Description: '"Can use our car images by using the following values for image_url: <br>“car_left_front.png”<br>“car_left_rear.png”<br>“car_rear.png”<br>“car_front.png”<br>“car_right_front.png”<br>“car_right_rear.png”<br><br><br>Custom urls are also supported"',
-            Default: '',
-            Main_Property: false
-        },
-        {
-            Option: 'Text Color',
-            Name: 'text_color',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Media' }
-            ],
-            Description: 'Hex code for text color that will be applied to instruction text',
-            Default: '',
-            Main_Property: false
-        },
-        {
-            Option: 'Text Size',
-            Name: 'text_size',
-            Type: 'Integer',
-            Applies_To: [
-                { type: 'Media' }
-            ],
-            Description: 'Font size that will applied to instruction tex',
-            Default: '',
-            Main_Property: false
-        }
-    ]
-}
+    mediaInstructionAttributes: {
+        templates: [
+            {
+                Option: 'Auto Advance',
+                Name: 'auto_advance',
+                Type: 'Boolean',
+                Applies_To: [
+                    { type: 'Media' }
+                ],
+                Description: 'Will move to next instruction once an image has been captured',
+                Default: false,
+                Main_Property: false
+            },
+            {
+                Option: 'Auto Navigate',
+                Name: 'autonav',
+                Type: 'Boolean',
+                Applies_To: [
+                    { type: 'Media' }
+                ],
+                Description: 'Will move to next instruction when instruction checkbox is checked',
+                Default: false,
+                Main_Property: false
+            },
+            {
+                Option: 'Label',
+                Name: 'label',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Media' }
+                ],
+                Description: 'Text that will be displayed in instruction to user.',
+                Default: '',
+                Main_Property: false
+            },
+            {
+                Option: 'Image URL',
+                Name: 'image_url',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Media' }
+                ],
+                Description: '"Can use our car images by using the following values for image_url: <br>“car_left_front.png”<br>“car_left_rear.png”<br>“car_rear.png”<br>“car_front.png”<br>“car_right_front.png”<br>“car_right_rear.png”<br><br><br>Custom urls are also supported"',
+                Default: '',
+                Main_Property: false
+            },
+            {
+                Option: 'Text Color',
+                Name: 'text_color',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Media' }
+                ],
+                Description: 'Hex code for text color that will be applied to instruction text',
+                Default: '',
+                Main_Property: false
+            },
+            {
+                Option: 'Text Size',
+                Name: 'text_size',
+                Type: 'Integer',
+                Applies_To: [
+                    { type: 'Media' }
+                ],
+                Description: 'Font size that will applied to instruction tex',
+                Default: '',
+                Main_Property: false
+            }
+        ]
+    },
 
-export const digitalFormsAttributes = {
-    templates: [
-        {
-            Option: 'Form Template ID',
-            Name: 'form_template_id',
-            Type: 'String',
-            Applies_To: [
-                { type: 'PDF' }
-            ],
-            Description: '',
-            Default: undefined,
-            Main_Property: true
-        }
-    ]
-}
+    PDF: {
+        templates: [
+            {
+                Option: 'Form Template ID',
+                Name: 'form_template_id',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'PDF' }
+                ],
+                Description: '',
+                Default: undefined,
+                Main_Property: true
+            }
+        ]
+    },
 
-export const emailAttributes = {
-    templates: [
-        {
-            Option: 'Send To Remember',
-            Name: 'send_to_remember',
-            Type: 'Boolean',
-            Applies_To: [
-                { type: 'Share' }
-            ],
-            Description: 'If true will populate default emails into check-in (return)',
-            Default: true,
-            Main_Property: false
-        },
-        {
-            Option: 'Send Emails Automatically (BCC)',
-            Name: 'include_bcc',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Share' }
-            ],
-            Description: 'String of comma separated emails that will be blind copied on all transactions.',
-            Default: undefined,
-            Main_Property: true
-        },
-        {
-            Option: 'Copy Recipients To ...',
-            Name: 'addresses_copied_to',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Share' }
-            ],
-            Description: '',
-            Default: 'both',
-            Main_Property: false
-        },
-        {
-            Option: 'Visible',
-            Name: 'visible',
-            Type: 'Boolean',
-            Applies_To: [
-                { type: 'Share' }
-            ],
-            Description: 'Should show email entry in upload tab of Mobile apps',
-            Default: true,
-            Main_Property: false
-        },
-        {
-            Option: 'Add Emails Automatically',
-            Name: 'send_to_text_default',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Share' }
-            ],
-            Description: 'String of comma separated emails that will be added by default on checkout',
-            Default: undefined,
-            Main_Property: true
-        },
-        {
-            Option: 'Email Template',
-            Name: 'template',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Share' }
-            ],
-            Description: 'Choose which email template you\'d like to use',
-            Default: undefined,
-            Main_Property: true
-        }
-    ]
-}
+    Share: {
+        templates: [
+            {
+                Option: 'Send To Remember',
+                Name: 'send_to_remember',
+                Type: 'Boolean',
+                Applies_To: [
+                    { type: 'Share' }
+                ],
+                Description: 'If true will populate default emails into check-in (return)',
+                Default: true,
+                Main_Property: false
+            },
+            {
+                Option: 'Send Emails Automatically (BCC)',
+                Name: 'include_bcc',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Share' }
+                ],
+                Description: 'String of comma separated emails that will be blind copied on all transactions.',
+                Default: undefined,
+                Main_Property: true
+            },
+            {
+                Option: 'Copy Recipients To ...',
+                Name: 'addresses_copied_to',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Share' }
+                ],
+                Description: '',
+                Default: 'both',
+                Main_Property: false
+            },
+            {
+                Option: 'Visible',
+                Name: 'visible',
+                Type: 'Boolean',
+                Applies_To: [
+                    { type: 'Share' }
+                ],
+                Description: 'Should show email entry in upload tab of Mobile apps',
+                Default: true,
+                Main_Property: false
+            },
+            {
+                Option: 'Add Emails Automatically',
+                Name: 'send_to_text_default',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Share' }
+                ],
+                Description: 'String of comma separated emails that will be added by default on checkout',
+                Default: undefined,
+                Main_Property: true
+            },
+            {
+                Option: 'Email Template',
+                Name: 'template',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Share' }
+                ],
+                Description: 'Choose which email template you\'d like to use',
+                Default: undefined,
+                Main_Property: true
+            }
+        ]
+    },
 
-export const uploadAttributes = {
-    templates: [
-        {
-            Option: 'Signature Logo URL',
-            Name: 'signature_logo_url',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'URL to image resource that will be displayed at the top of the signature capture page',
-            Default: '',
-            Main_Property: false
-        },
-        {
-            Option: 'Require Signature',
-            Name: 'signature_required',
-            Type: 'Boolean',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'Requires user to add signature before allowing upload.',
-            Default: false,
-            Main_Property: true
-        },
-        {
-            Option: 'Multiple Signatures',
-            Name: 'allow_multiple_signatures',
-            Type: 'Boolean',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'If true allows users to enter more than one signature',
-            Default: false,
-            Main_Property: true
-        },
-        {
-            Option: 'Require # Signatures',
-            Name: 'required_signature_count',
-            Type: 'Integer',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'Amount of required signatures before allowing upload',
-            Default: 0,
-            Main_Property: true
-        },
-        {
-            Option: 'Require # Photos',
-            Name: 'required_photo_count',
-            Type: 'Integer',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'Amount of required photos needed before allowing upload',
-            Default: 0,
-            Main_Property: true
-        },
-        {
-            Option: 'Require # Videos',
-            Name: 'required_video_count',
-            Type: 'Integer',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'Amount of required videos needed before allowing upload',
-            Default: 0,
-            Main_Property: true
-        },
-        {
-            Option: 'Group Item Key Notations Name',
-            Name: 'name',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'Used to add custom hint to signature name field',
-            Default: 'SignatureName',
-            Main_Property: false
-        },
-        {
-            Option: 'Group Item Key Notations Label',
-            Name: 'label',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'Used to add custom hint to signature name field',
-            Default: "Signed By",
-            Main_Property: false
-        },
-        {
-            Option: 'Check-in Label',
-            Name: 'check_in_label',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: '',
-            Default: undefined,
-            Main_Property: false
-        },
-        {
-            Option: 'Email Autocomplete',
-            Name: 'email_autocomplete',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'URL provided by customer that returns email autocomplete based on search string ',
-            Default: undefined,
-            Main_Property: false
-        },
-        {
-            Option: 'Agreement URL',
-            Name: 'agreement_url',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: '',
-            Default: undefined,
-            Main_Property: false
-        },
-        {
-            Option: 'Show CDW',
-            Name: 'show_cdw',
-            Type: 'Boolean',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'If true will show cdw options in apps',
-            Default: false,
-            Main_Property: false
-        },
-        {
-            Option: 'CDW Accept Prompt',
-            Name: 'accept_text',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'Allows for customizing CDW text. Accept_text and decline_text will be what is shown when user has not selected an option. Result_accept_text and result_decline_text is the text that will be shown when a button is selected',
-            Default: "Accept Collision DW",
-            Main_Property: false
-        },
-        {
-            Option: 'CDW Decline Prompt',
-            Name: 'decline_text',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'Allows for customizing CDW text. Accept_text and decline_text will be what is shown when user has not selected an option. Result_accept_text and result_decline_text is the text that will be shown when a button is selected',
-            Default: "Decline Collision Damage Waiver",
-            Main_Property: false
-        },
-        {
-            Option: 'CDW Accept Result',
-            Name: 'result_accept_text',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'Allows for customizing CDW text. Accept_text and decline_text will be what is shown when user has not selected an option. Result_accept_text and result_decline_text is the text that will be shown when a button is selected',
-            Default: "Accepted (text)",
-            Main_Property: false
-        },
-        {
-            Option: 'CDW Decline Result',
-            Name: 'result_decline_text',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Upload' }
-            ],
-            Description: 'Allows for customizing CDW text. Accept_text and decline_text will be what is shown when user has not selected an option. Result_accept_text and result_decline_text is the text that will be shown when a button is selected',
-            Default: "Declined (customizable)",
-            Main_Property: false
-        }
-    ]
-}
+    Upload: {
+        templates: [
+            {
+                Option: 'Signature Logo URL',
+                Name: 'signature_logo_url',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'URL to image resource that will be displayed at the top of the signature capture page',
+                Default: '',
+                Main_Property: false
+            },
+            {
+                Option: 'Require Signature',
+                Name: 'signature_required',
+                Type: 'Boolean',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'Requires user to add signature before allowing upload.',
+                Default: false,
+                Main_Property: true
+            },
+            {
+                Option: 'Multiple Signatures',
+                Name: 'allow_multiple_signatures',
+                Type: 'Boolean',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'If true allows users to enter more than one signature',
+                Default: false,
+                Main_Property: true
+            },
+            {
+                Option: 'Require # Signatures',
+                Name: 'required_signature_count',
+                Type: 'Integer',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'Amount of required signatures before allowing upload',
+                Default: 0,
+                Main_Property: true
+            },
+            {
+                Option: 'Require # Photos',
+                Name: 'required_photo_count',
+                Type: 'Integer',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'Amount of required photos needed before allowing upload',
+                Default: 0,
+                Main_Property: true
+            },
+            {
+                Option: 'Require # Videos',
+                Name: 'required_video_count',
+                Type: 'Integer',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'Amount of required videos needed before allowing upload',
+                Default: 0,
+                Main_Property: true
+            },
+            {
+                Option: 'Group Item Key Notations Name',
+                Name: 'name',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'Used to add custom hint to signature name field',
+                Default: 'SignatureName',
+                Main_Property: false
+            },
+            {
+                Option: 'Group Item Key Notations Label',
+                Name: 'label',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'Used to add custom hint to signature name field',
+                Default: "Signed By",
+                Main_Property: false
+            },
+            {
+                Option: 'Check-in Label',
+                Name: 'check_in_label',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: '',
+                Default: undefined,
+                Main_Property: false
+            },
+            {
+                Option: 'Email Autocomplete',
+                Name: 'email_autocomplete',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'URL provided by customer that returns email autocomplete based on search string ',
+                Default: undefined,
+                Main_Property: false
+            },
+            {
+                Option: 'Agreement URL',
+                Name: 'agreement_url',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: '',
+                Default: undefined,
+                Main_Property: false
+            },
+            {
+                Option: 'Show CDW',
+                Name: 'show_cdw',
+                Type: 'Boolean',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'If true will show cdw options in apps',
+                Default: false,
+                Main_Property: false
+            },
+            {
+                Option: 'CDW Accept Prompt',
+                Name: 'accept_text',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'Allows for customizing CDW text. Accept_text and decline_text will be what is shown when user has not selected an option. Result_accept_text and result_decline_text is the text that will be shown when a button is selected',
+                Default: "Accept Collision DW",
+                Main_Property: false
+            },
+            {
+                Option: 'CDW Decline Prompt',
+                Name: 'decline_text',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'Allows for customizing CDW text. Accept_text and decline_text will be what is shown when user has not selected an option. Result_accept_text and result_decline_text is the text that will be shown when a button is selected',
+                Default: "Decline Collision Damage Waiver",
+                Main_Property: false
+            },
+            {
+                Option: 'CDW Accept Result',
+                Name: 'result_accept_text',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'Allows for customizing CDW text. Accept_text and decline_text will be what is shown when user has not selected an option. Result_accept_text and result_decline_text is the text that will be shown when a button is selected',
+                Default: "Accepted (text)",
+                Main_Property: false
+            },
+            {
+                Option: 'CDW Decline Result',
+                Name: 'result_decline_text',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Upload' }
+                ],
+                Description: 'Allows for customizing CDW text. Accept_text and decline_text will be what is shown when user has not selected an option. Result_accept_text and result_decline_text is the text that will be shown when a button is selected',
+                Default: "Declined (customizable)",
+                Main_Property: false
+            }
+        ]
+    },
 
-export const checklistAttributes = {
-    templates: [
-        {
-            Option: 'Transaction Type',
-            Name: 'transaction_type',
-            Type: 'String',
-            Applies_To: [
-                { type: 'Checklist' }
-            ],
-            Description: 'Sets which transaction type(s) this specific checklist can appear in during the transaction lifetime.',
-            Default: "",
-            Main_Property: false
-        }
-    ]
+    Checklist: {
+        templates: [
+            {
+                Option: 'Transaction Type',
+                Name: 'transaction_type',
+                Type: 'String',
+                Applies_To: [
+                    { type: 'Checklist' }
+                ],
+                Description: 'Sets which transaction type(s) this specific checklist can appear in during the transaction lifetime.',
+                Default: "",
+                Main_Property: false
+            }
+        ]
+    }
 }

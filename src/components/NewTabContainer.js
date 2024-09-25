@@ -10,7 +10,7 @@ const NewTabContainer = ({ tabOptions, onDragEnd }) => {
                     {...provided.droppableProps}
                     style={{ width: 'auto', padding: 0 }}
                 >
-                    <h4 style={{ textAlign: 'center' }}>Add New tab</h4>
+                    <h4 style={{ textAlign: 'center', fontSize: '16pt', borderBottom: '1px solid lightgrey', fontFamily: 'Overpass, sans-serif' }}>Add New Tab:</h4>
                     {tabOptions.templates.map((tab, index) => (
                         <Draggable key={tab.type} draggableId={tab.type} index={index}>
                             {(provided) => (
@@ -28,6 +28,10 @@ const NewTabContainer = ({ tabOptions, onDragEnd }) => {
                                         textAlign: 'center',
                                         backgroundColor: '#E53A4E',
                                         borderRadius: '50px',
+                                        height: '20px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
                                         ...provided.draggableProps.style,
                                     }}
                                 >
