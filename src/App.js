@@ -496,7 +496,7 @@ function App() {
     const newTab = {
       number: newTabCount,
       key: newTabKey,
-      type: tabOption.type,
+      name: `New ${tabOption.type} Tab ${nextNumber}`,
       groups: [],
       tab_bar_item: {
         title: `New ${tabOption.type} Tab ${newTabCount}`,
@@ -868,6 +868,7 @@ function App() {
             // Update the nested tab_bar_item.title property
             return {
               ...module,
+              name: newValue,
               tab_bar_item: {
                 ...module.tab_bar_item,
                 title: newValue,
