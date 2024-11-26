@@ -34,6 +34,8 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [fullModuleKeys, setFullModuleKeys] = useState([]);
   const [fieldError, setFieldError] = useState('');
+  const [selectedWorkflowOptionId, setSelectedWorkflowOptionId] = useState(null);
+
 
   useEffect(() => {
     const storedToken = localStorage.getItem('apiToken');
@@ -101,8 +103,7 @@ function App() {
         const updatedModules = prevData.template.modules.map((module) => {
           if (module.logic_branch && module.logic_branch.variable === '{WORKFLOW_MODULES}') {
             const updatedOptions = module.logic_branch.options.map((option) => {
-              if (option.value === selectedWorkflowOptionValue) {
-                // Update the value property with the current fullModuleKeys
+              if (option.id === selectedWorkflowOptionId) { // Use option.id for matching
                 return {
                   ...option,
                   value: fullModuleKeys.join(', '),
@@ -120,7 +121,7 @@ function App() {
           }
           return module;
         });
-
+  
         return {
           ...prevData,
           template: {
@@ -130,13 +131,11 @@ function App() {
         };
       });
     };
-
-    if (workflowData && selectedWorkflowOptionValue) {
+  
+    if (workflowData && selectedWorkflowOptionId) { // Use selectedWorkflowOptionId here
       updateSequenceValue();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fullModuleKeys, selectedWorkflowOptionValue]);
-
+  }, [fullModuleKeys, selectedWorkflowOptionId]); // Add selectedWorkflowOptionId to dependencies
 
   const handleTabClick = (tabKey) => {
     setActiveWorkflowTab(tabKey);
@@ -390,14 +389,13 @@ function App() {
       // Store filtered module keys
       setModuleKeys(filteredKeys);
 
-
-
       // Find the selected option
       const selectedOption = workflowOptions.find(option => option.value === workflowValue);
       if (selectedOption) {
         setWorkflowTitle(selectedOption.label);
         setSelectedWorkflowOptionValue(selectedOption.value);
         setSelectedWorkflowModuleKey(selectedOption.moduleKey);
+        setSelectedWorkflowOptionId(selectedOption.id);
       }
 
       if (filteredKeys.length > 0) {
@@ -410,6 +408,7 @@ function App() {
       setWorkflowTitle('');
       setSelectedWorkflowOptionValue(null);
       setSelectedWorkflowModuleKey(null);
+      setSelectedWorkflowOptionId(null);
     }
   };
 
