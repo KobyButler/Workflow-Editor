@@ -135,7 +135,7 @@ function App() {
     if (workflowData && selectedWorkflowOptionId) { // Use selectedWorkflowOptionId here
       updateSequenceValue();
     }
-  }, [fullModuleKeys, selectedWorkflowOptionId]); // Add selectedWorkflowOptionId to dependencies
+  }, [fullModuleKeys, selectedWorkflowOptionId, workflowData]); // Add selectedWorkflowOptionId to dependencies
 
   const handleTabClick = (tabKey) => {
     setActiveWorkflowTab(tabKey);
